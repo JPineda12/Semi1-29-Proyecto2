@@ -2,11 +2,12 @@
 
 - [ ] Aplicacion Web (Frontend)
 	- [ ] Login Page
+    	- [x] Diseño (Just Frontend)
         - [ ] Connected with backend for Facial login (Rekognition)
         - [ ] Implemented with Cognito for User.
 	- [ ] Register Page
 		- [x] Upload Picture
-        - [ ] Take Picture with Webcam
+        - [x] Take Picture with Webcam
         - [ ] Connected With Backend
 	- [ ] Home Page
 		- [ ] User Info
@@ -41,7 +42,7 @@
     - [ ] Security Groups
     
 
-- [x] Documentacion
-	- [x] Descripcion Arquitectura
-	- [x] Describir usuarios IAM, permisos, y roles.
+- [ ] Documentacion
+	- [ ] Descripcion Arquitectura
+	- [ ] Describir usuarios IAM, permisos, y roles.
 

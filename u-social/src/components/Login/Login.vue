@@ -1,148 +1,125 @@
 <template>
   <div class="wrapper">
     <div class="container">
-      <form class="form">
-        <div class="titulo">
-          <h1 class="header heading">
-            <span class="heading--underline">Registrarse</span>
-          </h1>
-        </div>
-        <br />
-        <br />
-        <br />
+      <span class="heading--underline">Iniciar Sesion</span>
+      <div class="sesion-ways">
+        <form class="form">
+          <div class="titulo">
+            <span class="sub--underline">Via Credenciales</span>
+          </div>
+          <br />
+          <br />
+          <br />
+          <div class="user-info">
+            <div class="user-data">
+              <input
+                type="text"
+                v-model="LoginValues.user"
+                placeholder="Username"
+              />
+              <input
+                type="password"
+                v-model="LoginValues.contrasena"
+                placeholder="Password"
+              />
+            </div>
+          </div>
+        </form>
+        <div class="vl"></div>
+        <div class="img-upload">
+          <div class="titulo">
+            <span class="sub--underline">Via Reconocimiento Facial</span>
+          </div>
+          <div class="imgPreview" v-if="!isCameraOpen">
+            <img :src="imagen" />
+          </div>
+          <div v-if="isCameraOpen" class="imgPreview">
+            <video
+              ref="camera"
+              :width="canvasWidth"
+              :height="canvasHeight"
+              class="cam-place"
+              autoplay
+            ></video>
+            <canvas
+              v-show="false"
+              id="photoTaken"
+              ref="canvas"
+              :width="canvasWidth"
+              :height="canvasHeight"
+            ></canvas>
+          </div>
 
-        <div class="user-info">
-          <div class="user-data">
-            <input
-              type="text"
-              v-model="registerValues.name"
-              placeholder="Nombre Completo"
-            />
-            <input
-              type="text"
-              v-model="registerValues.user"
-              placeholder="Username"
-            />
-            <input
-              type="text"
-              v-model="registerValues.correo"
-              placeholder="Email"
-            />
-            <input
-              type="password"
-              v-model="registerValues.contrasena"
-              placeholder="Password"
-            />
-            <input
-              type="password"
-              v-model="registerValues.confirmPass"
-              placeholder="Confirm Password"
-            />
-          </div>
-          <div class="img-upload">
-            <div class="imgPreview" v-if="!isCameraOpen">
-              <img :src="imagen" />
-            </div>
-            <div v-if="isCameraOpen" class="imgPreview">
-              <video
-                ref="camera"
-                :width="canvasWidth"
-                :height="canvasHeight"
-                class="cam-place"
-                autoplay
-              ></video>
-              <canvas
-                v-show="false"
-                id="photoTaken"
-                ref="canvas"
-                :width="canvasWidth"
-                :height="canvasHeight"
-              ></canvas>
-            </div>
-
-            <div class="uploadButton">
-              <label class="custom-file-upload">
-                <input type="file" @change="handlePhoto" accept="image/*" />
-                <svg
-                  v-if="!isCameraOpen"
-                  class="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  ></path>
-                </svg>
-              </label>
-              <button v-if="isCameraOpen" class="cam-button" @click="capture">
-                <svg
-                  class="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-              </button>
-              <button class="cam-button" @click="toggleCamera">
-                <svg
-                  v-if="!isCameraOpen"
-                  class="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                  ></path>
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                  ></path>
-                </svg>
-                <svg
-                  v-else
-                  class="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-              </button>
-            </div>
+          <div class="uploadButton">
+            <button v-if="isCameraOpen" class="cam-button" @click="capture">
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                id="open"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+            </button>
+            <button class="cam-button" @click="toggleCamera">
+              <svg
+                v-if="!isCameraOpen"
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+              </svg>
+              <svg
+                v-else
+                class="w-6 h-6"
+                id="close"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+            </button>
           </div>
         </div>
-        <div class="Botones">
-          <div>
-            <button type="submit" id="register-button" @click="registerEvent">Registrarse</button>
-          </div>
-          <div><button @click="goBack" id="back-button">Volver</button></div>
-        </div>
-      </form>
+      </div>
+    </div>
+    <div class="Botones">
+      <div>
+        <button type="submit" id="login-button" @click="LoginEvent">
+          Iniciar Sesion
+        </button>
+      </div>
+      <div>
+        <button @click="goRegister" id="register-button">Registrarse</button>
+      </div>
     </div>
 
     <ul class="bg-bubbles">
@@ -162,18 +139,14 @@
 
 <script>
 import Swal from "sweetalert2";
-import bcrypt from "bcryptjs";
+//import bcrypt from "bcryptjs";
 export default {
-  name: "Register",
+  name: "Login",
   data() {
     return {
-      registerValues: {
-        name: "",
+      LoginValues: {
         user: "",
-        correo: "",
         contrasena: "",
-        confirmPass: "",
-        idRol: 1,
       },
       imagen: "",
       imagenBase64: "",
@@ -223,73 +196,67 @@ export default {
 
     capture(event) {
       event.preventDefault();
-       const FLASH_TIMEOUT = 50;
+      const FLASH_TIMEOUT = 50;
       let self = this;
       setTimeout(() => {
-        const context = self.$refs.canvas.getContext('2d');
-        context.drawImage(self.$refs.camera, 0, 0, self.canvasWidth, self.canvasHeight);
-        const dataUrl = self.$refs.canvas.toDataURL("image/jpeg")
-            .replace("image/jpeg", "image/octet-stream");
-        this.imagen =  dataUrl;
+        const context = self.$refs.canvas.getContext("2d");
+        context.drawImage(
+          self.$refs.camera,
+          0,
+          0,
+          self.canvasWidth,
+          self.canvasHeight
+        );
+        const dataUrl = self.$refs.canvas
+          .toDataURL("image/jpeg")
+          .replace("image/jpeg", "image/octet-stream");
+        this.imagen = dataUrl;
         this.imagenBase64 = dataUrl;
         self.isCameraOpen = false;
         self.stopCameraStream();
       }, FLASH_TIMEOUT);
-      
     },
-    registerEvent(event) {
+    LoginEvent(event) {
       event.preventDefault();
-      if (
-        this.registerValues.user.length > 0 &&
-        this.registerValues.correo.length > 0 &&
-        this.imagenBase64.length > 0 &&
-        this.registerValues.contrasena.length > 0 &&
-        this.registerValues.confirmPass.length > 0
-      ) {
-        const salt = bcrypt.genSaltSync(10);
-        this.registerValues.contrasena = bcrypt.hashSync(
-          this.registerValues.contrasena,
-          salt
-        );
-        let user = {
-          user: this.registerValues.user,
-          correo: this.registerValues.correo,
-          nombre: this.registerValues.user,
-          contrasena: this.registerValues.contrasena,
-          imagen_url:
-            "https://i.pinimg.com/originals/2c/68/a2/2c68a2099526c36259b51f707e5e66f7.jpg",
-          idRol: 2,
-        };
-        console.log(user);
+      this.$router.push({ name: "Home" });
+      /*
+      await this.axios
+        .post("/login", this.loginValues)
+        .then((response) => {
+          if (response.data.length > 0) {
+            bcrypt.compare(
+              this.loginValues.pass,
+              response.data[0].contrasena,
+              function (err, result) {
+                if (err) {
+                  throw err;
+                }
+                if (result === true) {
+                  localStorage.setItem(
+                    "user-info",
+                    JSON.stringify(response.data[0])
+                  );
+                  this.$router.push({ name: "Home" });
+                } else {
+                  this.txtError = "Credenciales Incorrectas";
+                }
+              }.bind(this)
+            );
 
-        this.axios
-          .post("/register", user)
-          .then((response) => {
-            if (response.data.status === true) {
-              this.mensajeOk();
-            } else {
-              Swal.fire({
-                icon: "error",
-                title: "ERROR al registrarse",
-                text: "No se pudo completar el registro, intente mas tarde.",
-              });
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-        this.mensajeOk();
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Campos Incorrectos",
-          text: "Llene todos los campos.",
+            this.loginValues.pass = "";
+          } else {
+            this.txtError = "Credenciales Incorrectas";
+            this.loginValues.pass = "";
+          }
+        })
+        .catch((error) => {
+          console.log(error);
         });
-      }
+        */
     },
-    goBack(event) {
+    goRegister(event) {
       event.preventDefault();
-      this.$router.push({ name: "Login" });
+      this.$router.push({ name: "Register" });
     },
     mensajeOk() {
       Swal.fire({
@@ -298,7 +265,7 @@ export default {
         confirmButtonColor: "#3085d6",
       }).then((result) => {
         console.log(result);
-        this.$router.push({ name: "Login" });
+        this.$router.push({ name: "login" });
       });
     },
     handlePhoto(event) {
@@ -336,18 +303,55 @@ export default {
   text-shadow: 2px 2px #000000;
   z-index: 2;
   float: left;
+  font-size: 60px;
   margin-left: 18%;
 }
 .heading--underline:hover {
   background-size: 100% 88%;
   z-index: 2;
 }
-#register-button {
+
+.sub--underline {
+  background-image: linear-gradient(120deg, #5087da 0%, #7a8df7 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 0.2em;
+  background-position: 0 88%;
+  transition: background-size 200ms ease-in;
+  color: rgb(255, 255, 255);
+  text-shadow: 2px 2px #000000;
+  z-index: 2;
+  float: left;
+  font-size: 30px;
+  margin-left: 18%;
+}
+.sub--underline:hover {
+  background-size: 100% 88%;
+  z-index: 2;
+}
+
+.vl {
+  border-left: 6px solid rgb(255, 255, 255);
+  height: 50%;
+  position: absolute;
+  left: 50%;
+  margin-left: -3px;
+  top: 100px;
+}
+
+.titulo {
+  margin-top: 20px;
+  margin-bottom: 60px;
+  width: 100%;
+}
+#login-button {
   margin-bottom: 2px;
 }
 .Botones {
-  float: left;
-  margin-left: 14%;
+  position: absolute;
+  left: 50%;
+  margin-left: -130px;
+  margin-top: 30px;
+  z-index: 15;
 }
 * {
   box-sizing: border-box;
@@ -366,19 +370,30 @@ export default {
   width: 70%;
 }
 .img-upload {
-  margin-left: auto;
-  margin-right: auto;
+  float: right;
+  width: 40%;
+  height: 100%;
 }
+
+.img-upload span {
+  font-size: 30px;
+  margin-left: -25px;
+  white-space: nowrap;
+}
+
 .imgPreview {
+  margin-top: 25%;
   border-radius: 20px;
   border: 3px dashed rgb(99, 99, 99);
-  margin-bottom: 15px;
+  margin-left: 30px;
+  width: 170px;
+  height: 170px;
 }
-form img {
-  min-width: 170px;
-  min-height: 170px;
-  max-width: 170px;
-  max-height: 170px;
+.img-upload img {
+  min-width: 160px;
+  min-height: 160px;
+  max-width: 160px;
+  max-height: 160px;
   border-radius: 20px;
 }
 
@@ -419,7 +434,7 @@ body :-ms-input-placeholder {
   top: 50%;
   left: 0;
   width: 100%;
-  height: 450px;
+  height: 500px;
   margin-top: -230px;
   overflow: hidden;
 }
@@ -479,26 +494,14 @@ form input:focus {
   cursor: pointer;
   font-size: 18px;
   transition-duration: 0.25s;
+  margin-top: 3px;
 }
 form {
   position: relative;
   z-index: 2;
-}
-input[type="file"] {
-  display: none;
+  float: left;
 }
 
-.custom-file-upload {
-  appearance: none;
-  outline: 0;
-  border: 0;
-  padding: 10px 15px;
-  border-radius: 3px;
-  width: 250px;
-  cursor: pointer;
-  font-size: 18px;
-  transition-duration: 0.25s;
-}
 .Botones button:hover {
   background-color: #f5f7f9;
 }
@@ -601,10 +604,16 @@ input[type="file"] {
 svg {
   width: 30px;
   height: 30px;
+  color: white;
 }
 
+.uploadButton {
+  position: absolute;
+  margin-left: 90px;
+  z-index: 15;
+}
 .cam-button {
-  width: 40px;
+  width: 50px;
   height: 40px;
   background-color: transparent;
   background-repeat: no-repeat;
@@ -612,5 +621,14 @@ svg {
   cursor: pointer;
   overflow: hidden;
   outline: none;
+}
+.cam-button #open {
+  margin-left: -10px;
+}
+.cam-button #close {
+  margin-left: -20px;
+}
+video {
+  width: 160px;
 }
 </style>
