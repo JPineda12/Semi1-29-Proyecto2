@@ -7,34 +7,33 @@ const routes = [{
         path: "/",
         component: Login,
         meta: {
-            title: 'U-Social - Login'
-        }
+            title: "U-Social - Login",
+        },
     },
     {
         name: "Register",
         component: Register,
         path: "/register",
         meta: {
-            title: 'U-Social - Register'
-        }
+            title: "U-Social - Register",
+        },
     },
     {
         name: "Login",
         component: Login,
         path: "/login",
         meta: {
-            title: 'U-Social - Login'
-        }
+            title: "U-Social - Login",
+        },
     },
     {
-        name: 'Home',
+        name: "Home",
         component: Home,
         path: "/home",
         meta: {
-            title: 'U-Social - Home'
-        }
-    }
-
+            title: "U-Social - Home",
+        },
+    },
 ];
 
 const router = createRouter({
@@ -45,6 +44,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title}`;
     next();
-})
+});
 
 export default router;
