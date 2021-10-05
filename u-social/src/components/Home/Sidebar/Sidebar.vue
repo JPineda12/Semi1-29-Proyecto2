@@ -4,12 +4,39 @@
       <span v-if="collapsed" class="titulo">
         <img :src="logo" />
       </span>
-      <span v-else>U-Social</span>
+      <span v-else
+        >U-Social
+        <div class="profile">
+          <img :src="logo" />
+          <h3>Naruto Uzumaki</h3>
+        </div>
+      </span>
     </h1>
-    <SidebarLink :to="compActivo" name="Posts" icon="fas fa-home" @click='changeTo("Posts")'> Posts</SidebarLink> 
-    <SidebarLink :to="compActivo" name="Chat" icon="fas fa-comments" @click='changeTo("Chat")'> Chat</SidebarLink> 
-    <SidebarLink :to="compActivo" name="Users" icon="fas fa-user-friends" @click='changeTo("Users")'> Users</SidebarLink> 
 
+    <SidebarLink
+      :to="compActivo"
+      name="Posts"
+      icon="fas fa-home"
+      @click="changeTo('Posts')"
+    >
+      Posts</SidebarLink
+    >
+    <SidebarLink
+      :to="compActivo"
+      name="Chat"
+      icon="fas fa-comments"
+      @click="changeTo('Chat')"
+    >
+      Chat</SidebarLink
+    >
+    <SidebarLink
+      :to="compActivo"
+      name="Users"
+      icon="fas fa-user-friends"
+      @click="changeTo('Users')"
+    >
+      Users</SidebarLink
+    >
 
     <span
       class="collapse-icon"
@@ -23,42 +50,42 @@
 
 <script>
 import { collapsed, toggleSidebar, sidebarWidth } from "./state";
-import SidebarLink from "./SidebarLink"
+import SidebarLink from "./SidebarLink";
 export default {
   name: "Sidebar",
   emits: ["change"],
-  components:{ 
-    SidebarLink
+  components: {
+    SidebarLink,
   },
   setup() {
     return { collapsed, toggleSidebar, sidebarWidth };
   },
-  data(){
-    return{
+  data() {
+    return {
       logo: require("../../../assets/logo.png"),
-      compActivo: "Posts"
-    }
+      compActivo: "Posts",
+    };
   },
-  methods:{
-    changeTo(nombrePagina){
+  methods: {
+    changeTo(nombrePagina) {
       this.compActivo = nombrePagina;
-      this.$emit('change', this.compActivo);
-    }
-  }
+      this.$emit("change", this.compActivo);
+    },
+  },
 };
 </script>
 <style >
 :root {
-  --sidebar-bg-color: #2f855a;
-  --sidebar-item-hover: #38a169;
-  --sidebar-item-active: #276749;
+  --sidebar-bg-color: #35488a;
+  --sidebar-item-hover: #a8dadc;
+  --sidebar-item-active: #03045e;
 }
 </style>
 <style scoped>
 .sidebar {
   color: rgb(255, 255, 255);
   background-color: var(--sidebar-bg-color);
-  overflow:hidden;
+  overflow: hidden;
   float: left;
   position: fixed;
   z-index: 1;
@@ -87,5 +114,35 @@ export default {
 .guion {
   transform: rotate(90deg);
   font-size: 55px;
+}
+
+.profile img {
+  min-width: 80px;
+  min-height: 80px;
+  max-width: 80px;
+  max-height: 80px;
+  border: 1px solid;
+  border-radius: 13px;
+  position: relative;
+  margin-bottom: -15px;
+  left: 25%;
+}
+
+.profile {
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 15px;
+  white-space: nowrap;
+}
+h1 {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.titulo img {
+  min-width: 30px;
+  min-height: 30px;
+  max-width: 30px;
+  max-height: 30px;
 }
 </style>

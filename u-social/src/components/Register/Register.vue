@@ -411,10 +411,10 @@ body :-ms-input-placeholder {
 }
 .wrapper {
   background: #50a3a2;
-  background: -webkit-linear-gradient(top left, #39ece9 0%, #154eb8 100%);
-  background: -moz-linear-gradient(top left, #39ece9 0%, #154eb8 100%);
-  background: -o-linear-gradient(top left, #39ece9 0%, #154eb8 100%);
-  background: linear-gradient(to bottom right, #39ece9 0%, #154eb8 100%);
+  background: -webkit-linear-gradient(top left, #4ab1ec 0%, #154eb8 100%);
+  background: -moz-linear-gradient(top left, #4ab1ec 0%, #154eb8 100%);
+  background: -o-linear-gradient(top left, #4ab1ec 0%, #154eb8 100%);
+  background: linear-gradient(to bottom right, #4ab1ec 0%, #154eb8 100%);
   position: absolute;
   top: 50%;
   left: 0;
