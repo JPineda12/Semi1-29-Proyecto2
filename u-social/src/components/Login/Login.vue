@@ -9,17 +9,19 @@
           </div>
           <br />
           <br />
+          <h3 class="msjError" v-if="txtError">{{ txtError }}</h3>
           <br />
+
           <div class="user-info">
             <div class="user-data">
               <input
                 type="text"
-                v-model="LoginValues.user"
+                v-model="LoginValues.username"
                 placeholder="Username"
               />
               <input
                 type="password"
-                v-model="LoginValues.contrasena"
+                v-model="LoginValues.password"
                 placeholder="Password"
               />
             </div>
@@ -49,6 +51,14 @@
               :height="canvasHeight"
             ></canvas>
           </div>
+          <div class="div-user">
+            <input
+              type="text"
+              v-model="LoginValues.username_cam"
+              placeholder="Username"
+              class="input-user"
+            />
+          </div>
 
           <div class="uploadButton">
             <button v-if="isCameraOpen" class="cam-button" @click="capture">
@@ -68,6 +78,7 @@
                 ></path>
               </svg>
             </button>
+
             <button class="cam-button" @click="toggleCamera">
               <svg
                 v-if="!isCameraOpen"
@@ -145,14 +156,16 @@ export default {
   data() {
     return {
       LoginValues: {
-        user: "",
-        contrasena: "",
+        username: "",
+        password: "",
+        username_cam: "",
       },
       imagen: "",
       imagenBase64: "",
       isCameraOpen: false,
       canvasHeight: 170,
       canvasWidth: 170,
+      txtError: "",
     };
   },
   beforeCreate() {
@@ -218,41 +231,79 @@ export default {
     },
     LoginEvent(event) {
       event.preventDefault();
-      this.$router.push({ name: "Home" });
-      /*
-      await this.axios
-        .post("/login", this.loginValues)
-        .then((response) => {
-          if (response.data.length > 0) {
-            bcrypt.compare(
-              this.loginValues.pass,
-              response.data[0].contrasena,
-              function (err, result) {
-                if (err) {
-                  throw err;
-                }
-                if (result === true) {
-                  localStorage.setItem(
-                    "user-info",
-                    JSON.stringify(response.data[0])
-                  );
-                  this.$router.push({ name: "Home" });
-                } else {
-                  this.txtError = "Credenciales Incorrectas";
-                }
-              }.bind(this)
-            );
-
-            this.loginValues.pass = "";
-          } else {
-            this.txtError = "Credenciales Incorrectas";
-            this.loginValues.pass = "";
+      this.txtError = "";
+      if (
+        this.imagen === "" &&
+        this.LoginValues.username !== "" &&
+        this.LoginValues.password !== ""
+      ) {
+        this.LoginCreds();
+      } else {
+        this.LoginFace();
+      }
+    },
+    async LoginFace() {
+      let arraybase64 = this.imagen.split("/");
+      let compatible_base64 = "";
+      let i = 0;
+      for await (let str of arraybase64) {
+        if (i >= 2) {
+          compatible_base64 += "/" + str;
+        }
+        i++;
+      }
+      let user = {
+        username: this.LoginValues.username_cam,
+        imagen: compatible_base64,
+      };
+      this.axios.post("/login-face", user).then((response) => {
+        console.log(response);
+        this.LoginValues.password = "";
+        if (response.data.Comparacion.length > 0) {
+          if (response.data.Comparacion[0].Similarity >= 80) {
+            this.axios
+              .get(`/user/${this.LoginValues.username_cam}`)
+              .then((res) => {
+                localStorage.setItem("user-info", JSON.stringify(res.data[0]));
+                this.$router.push({ name: "Home" });
+                this.LoginValues.password = "";
+                this.LoginValues.username = "";
+                this.LoginValues.username_cam = "";
+              });
           }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-        */
+        } else {
+          Swal.fire({
+            title: "No se reconocio el rostro con el usuario: " + user.username,
+            icon: "error",
+            confirmButtonColor: "#3085d6",
+          }).then((result) => {
+            console.log(result);
+          });
+        }
+      });
+    },
+    LoginCreds() {
+      this.axios.post("/login", this.LoginValues).then((response) => {
+        console.log(response);
+        if (response.data.code === "UserNotConfirmedException") {
+          this.txtError = "Usuario sin CONFIRMAR";
+          this.LoginValues.password = "";
+        } else if (
+          response.data.code === "NotAuthorizedException" ||
+          response.data.code === "InvalidParameterException"
+        ) {
+          this.txtError = "Credenciales Incorrectas";
+          this.LoginValues.password = "";
+        } else {
+          this.axios.get(`/user/${this.LoginValues.username}`).then((res) => {
+            localStorage.setItem("user-info", JSON.stringify(res.data[0]));
+            this.$router.push({ name: "Home" });
+            this.LoginValues.password = "";
+            this.LoginValues.username = "";
+            this.LoginValues.username_cam = "";
+          });
+        }
+      });
     },
     goRegister(event) {
       event.preventDefault();
@@ -290,7 +341,6 @@ export default {
   },
 };
 </script>
-
 <style lang="css" scoped>
 @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300);
 .heading--underline {
@@ -382,18 +432,16 @@ export default {
 }
 
 .imgPreview {
-  margin-top: 25%;
   border-radius: 20px;
   border: 3px dashed rgb(99, 99, 99);
-  margin-left: 30px;
-  width: 170px;
-  height: 170px;
+  width: 130px;
+  height: 130px;
 }
 .img-upload img {
-  min-width: 160px;
-  min-height: 160px;
-  max-width: 160px;
-  max-height: 160px;
+  min-width: 120px;
+  min-height: 120px;
+  max-width: 120px;
+  max-height: 120px;
   border-radius: 20px;
 }
 
@@ -474,14 +522,51 @@ form input {
   font-weight: 300;
   z-index: 15;
 }
+
 form input:hover {
   background-color: rgba(255, 255, 255, 0.4);
 }
+
 form input:focus {
   background-color: white;
   width: 300px;
   color: #536de3;
 }
+.input-user:focus {
+  background-color: white;
+  width: 180px;
+  color: #536de3;
+}
+
+.input-user:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.input-user {
+  display: block;
+  appearance: none;
+  outline: 0;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 150px;
+  border-radius: 3px;
+  padding: 10px 15px;
+  margin: 0 auto 10px auto;
+  text-align: center;
+  font-size: 18px;
+  color: white;
+  transition-duration: 0.25s;
+  font-weight: 300;
+  z-index: 15;
+}
+
+.div-user {
+  margin-top: -80px;
+  margin-left: 80%;
+  position: relative;
+  z-index: 15;
+}
+
 .Botones button {
   appearance: none;
   outline: 0;
@@ -608,8 +693,9 @@ svg {
 }
 
 .uploadButton {
-  position: absolute;
-  margin-left: 90px;
+  position: relative;
+  margin-left: -45%;
+  margin-top: 40px;
   z-index: 15;
 }
 .cam-button {
@@ -629,6 +715,9 @@ svg {
   margin-left: -20px;
 }
 video {
-  width: 160px;
+  margin-top: -25px;
+  width: 125px;
+  border-radius: 22px;
+  overflow: hidden;
 }
 </style>

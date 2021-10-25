@@ -4,8 +4,7 @@
       <span v-if="collapsed" class="titulo">
         <img :src="logo" />
       </span>
-      <span v-else
-        >U-Social
+      <span v-else>
         <div class="profile">
           <img :src="logo" />
           <h3>Naruto Uzumaki</h3>
@@ -36,6 +35,14 @@
       @click="changeTo('Users')"
     >
       Users</SidebarLink
+    >
+    <SidebarLink
+      :to="compActivo"
+      name="Logout"
+      icon="fas fa-power-off"
+      @click="logout()"
+    >
+      Logout</SidebarLink
     >
 
     <span
@@ -71,12 +78,16 @@ export default {
       this.compActivo = nombrePagina;
       this.$emit("change", this.compActivo);
     },
+    logout() {
+      localStorage.clear();
+      this.$router.push({ name: "Login" });
+    },
   },
 };
 </script>
 <style >
 :root {
-  --sidebar-bg-color: #35488a;
+  --sidebar-bg-color: #3a3e42;
   --sidebar-item-hover: #a8dadc;
   --sidebar-item-active: #03045e;
 }

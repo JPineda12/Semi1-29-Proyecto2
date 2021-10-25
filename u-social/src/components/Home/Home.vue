@@ -1,9 +1,11 @@
 <template>
-  <Sidebar @change="show($event)"/>
-  <div :style="{ 'margin-left': sidebarWidth }">
-    <Posts v-if="showPosts"  />
-    <Chat v-if="showChat"  />
-    <Users v-if="showUsers" />
+  <div class="container">
+    <Sidebar @change="show($event)" />
+    <div class="comps" :style="{ 'margin-left': sidebarWidth }">
+      <Posts class="comp" v-if="showPosts" />
+      <Chat class="comp" v-if="showChat" />
+      <Users class="comp" v-if="showUsers" />
+    </div>
   </div>
 </template>
 
@@ -16,6 +18,13 @@ import Chat from "./Chat/Chat.vue";
 
 export default {
   name: "Home",
+  created() {
+    document.querySelector("html").classList.add("prueba");
+  },
+  unmounted() {
+    document.querySelector("html").classList.remove("prueba");
+  },
+
   setup() {
     return { sidebarWidth };
   },
@@ -34,26 +43,33 @@ export default {
   },
 
   methods: {
-    show(comp){
-      if(comp === 'Posts' && this.showPosts === false){
+    show(comp) {
+      if (comp === "Posts" && this.showPosts === false) {
         this.showPosts = true;
         this.showChat = false;
         this.showUsers = false;
-      }else if(comp === 'Chat' && this.showChat === false){
+      } else if (comp === "Chat" && this.showChat === false) {
         this.showPosts = false;
         this.showChat = true;
-        this.showUsers = false;        
-        console.log
-      }else if(comp === 'Users' && this.showUsers === false){
+        this.showUsers = false;
+        console.log;
+      } else if (comp === "Users" && this.showUsers === false) {
         this.showPosts = false;
         this.showChat = false;
-        this.showUsers = true; 
-        console.log("Uss")       
+        this.showUsers = true;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
+<style>
+.prueba {
+  background: #18191a;
+}
+</style>
 <style scoped>
+.comp {
+  margin-top: -10px;
+}
 </style>

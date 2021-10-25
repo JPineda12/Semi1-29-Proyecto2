@@ -1,19 +1,10 @@
 <template>
   <div class="card-view">
     <div class="r-layout">
-      <div class="r-img cm-sm">
-        <img :src="getImage" alt="" />
-      </div>
-      <div class="r-content">
-        <!-- <div class="s-tag">4.3</div> -->
-        <h4 class="title">{{ getOwner }}</h4>
-        <p class="date-text">{{ getDate }}</p>
-        <div class="taglist" v-for="tag in getTags" :key="tag.idTag">
-          <div class="tag">{{ tag.etiqueta }}</div>
-        </div>
-
-        <p class="main-text">{{ getText }}</p>
-        <p class="color-text">Translate post</p>
+      <div class="tag" id="selected">{{ selectedTag }}</div>
+      <div class="vl"></div>
+      <div class="taglist" v-for="tag in getTags" :key="tag.idTag">
+        <div class="tag" @click="selecTag(tag)">{{ tag.Etiqueta }}</div>
       </div>
     </div>
   </div>
@@ -21,25 +12,25 @@
 
 <script>
 export default {
-  name: "SinglePost",
+  name: "FilterList",
+  emits: ["filter"],
   props: {
-    Post: { type: Object, required: true },
+    Tags: { type: Array, required: true },
   },
   computed: {
-    getText: function () {
-      return this.Post.text;
-    },
-    getOwner: function () {
-      return this.Post.owner;
-    },
     getTags: function () {
-      return this.Post.tags;
+      return this.Tags;
     },
-    getDate: function () {
-      return this.Post.date;
-    },
-    getImage: function () {
-      return this.Post.image;
+  },
+  data() {
+    return {
+      selectedTag: "Todos",
+    };
+  },
+  methods: {
+    selecTag(tag) {
+      this.selectedTag = tag.Etiqueta;
+      this.$emit("filter", tag.Etiqueta);
     },
   },
 };
@@ -60,20 +51,16 @@ export default {
   --theme-color1: #e89a3d;
 }
 
-.c-container {
-  margin: auto;
-  width: 93%;
-  position: relative;
-  z-index: 1;
-}
-
 .card-view {
   -webkit-box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.05);
   box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.05);
   border-radius: 4px;
-  padding: 22px;
+  padding: 15px;
+  height: 35px;
   margin-bottom: 20px;
   background: #242526;
+
+
 }
 .flex-row {
   display: -webkit-box;
@@ -84,10 +71,7 @@ export default {
   margin-right: -15px;
   margin-left: -15px;
 }
-.spacer {
-  padding-top: 50px;
-  padding-bottom: 50px;
-}
+
 .bg-gray {
   background: #f8f8f8;
 }
@@ -111,19 +95,27 @@ export default {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  overflow-x: auto;
   position: relative;
 }
 .r-layout .r-img {
   position: relative;
-  min-width: 199px;
-  min-height: 192px;
-  max-width: 199px;
-  max-height: 192px;
+  min-width: 139px;
+  min-height: 132px;
+  max-width: 139px;
+  max-height: 132px;
   margin-right: 20px;
 }
 .cm-sm {
   width: 154px !important;
   height: 156px !important;
+  border-radius: 20px;
+}
+.dashed {
+  width: 154px !important;
+  height: 156px !important;
+  border-radius: 20px;
+  border: 3px dashed rgb(99, 99, 99);
 }
 .r-layout .r-img img {
   width: 100%;
@@ -132,13 +124,97 @@ export default {
   -o-object-fit: cover;
   object-fit: cover;
 }
-.r-layout .s-tag {
-  position: absolute;
-  top: 0;
-  right: 0;
-  font-weight: 500;
-  margin-right: 0;
+
+.card-sm-content .r-layout .r-content .title {
+  font-size: 17px;
 }
+.r-layout .r-content .title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #dedde5;
+  margin-bottom: 2px;
+}
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.r-layout .r-content p {
+  font-size: 14px;
+  color: #dedde5;
+  margin: 0;
+  margin-bottom: 10px;
+}
+.r-layout .r-content p {
+  font-size: 14px;
+  color: #dedde5;
+
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+textarea {
+  width: 600px;
+  height: 50px;
+  border: 3px solid #cccccc;
+  padding: 5px;
+  font-family: Tahoma, sans-serif;
+
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  resize: none;
+}
+
+.custom-file-upload {
+  appearance: none;
+  outline: 0;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 18px;
+  transition-duration: 0.25s;
+}
+.upload {
+  margin-left: 25%;
+}
+button:hover {
+  background-color: #dedde5;
+  cursor: pointer;
+}
+
+svg {
+  width: 30px;
+  height: 30px;
+}
+#fileIcon {
+  color: white;
+}
+input[type="file"] {
+  display: none;
+}
+
+.bt-post {
+  background-color: white;
+  width: 100px;
+  height: 35px;
+  text-align: center;
+  border: 2px solid;
+  border-radius: 5px;
+  display: inline-block;
+  box-sizing: border-box;
+  padding-bottom: 0px;
+  padding-top: 0px;
+  line-height: 30px;
+}
+
+.bt-post a {
+  position: relative;
+  top: -25%;
+  margin-top: 20px;
+  line-height: 30px;
+}
+
 .s-tag {
   width: 41px;
   height: 36px;
@@ -158,15 +234,6 @@ export default {
   justify-content: center;
   font-weight: bold;
   margin-right: 20px;
-}
-.card-sm-content .r-layout .r-content .title {
-  font-size: 17px;
-}
-.r-layout .r-content .title {
-  font-size: 22px;
-  font-weight: 600;
-  color: #dedde5;
-  margin: 0;
 }
 
 .taglist {
@@ -205,25 +272,19 @@ export default {
   justify-content: center;
   text-align: center;
 }
-p {
-  font-size: 14px;
-  color: #dedde5;
-  margin: 0;
-  margin-bottom: 10px;
+.vl {
+  border-left: 3px solid rgb(139, 139, 139);
+  height: 50px;
+  position: relative;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: -30px;
 }
-.date-text{
-  color: #A6A9AD;
-}
-.main-text{
-  font-size: 18px;
-}
-.r-layout .r-content .color-text {
-  font-weight: 600;
-  color: #00796b;
-}
-.color-text:hover {
-  text-decoration: underline;
+#selected {
+  background-color: white;
+  border: 1px solid black;
   cursor: pointer;
+  padding-left: 15px;
+  padding-right: 15px;
 }
-
 </style>

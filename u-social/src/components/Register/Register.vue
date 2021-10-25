@@ -138,7 +138,9 @@
         </div>
         <div class="Botones">
           <div>
-            <button type="submit" id="register-button" @click="registerEvent">Registrarse</button>
+            <button type="submit" id="register-button" @click="registerEvent">
+              Registrarse
+            </button>
           </div>
           <div><button @click="goBack" id="back-button">Volver</button></div>
         </div>
@@ -162,7 +164,6 @@
 
 <script>
 import Swal from "sweetalert2";
-import bcrypt from "bcryptjs";
 export default {
   name: "Register",
   data() {
@@ -223,21 +224,27 @@ export default {
 
     capture(event) {
       event.preventDefault();
-       const FLASH_TIMEOUT = 50;
+      const FLASH_TIMEOUT = 50;
       let self = this;
       setTimeout(() => {
-        const context = self.$refs.canvas.getContext('2d');
-        context.drawImage(self.$refs.camera, 0, 0, self.canvasWidth, self.canvasHeight);
-        const dataUrl = self.$refs.canvas.toDataURL("image/jpeg")
-            .replace("image/jpeg", "image/octet-stream");
-        this.imagen =  dataUrl;
+        const context = self.$refs.canvas.getContext("2d");
+        context.drawImage(
+          self.$refs.camera,
+          0,
+          0,
+          self.canvasWidth,
+          self.canvasHeight
+        );
+        const dataUrl = self.$refs.canvas
+          .toDataURL("image/jpeg")
+          .replace("image/jpeg", "image/octet-stream");
+        this.imagen = dataUrl;
         this.imagenBase64 = dataUrl;
         self.isCameraOpen = false;
         self.stopCameraStream();
       }, FLASH_TIMEOUT);
-      
     },
-    registerEvent(event) {
+   async registerEvent(event) {
       event.preventDefault();
       if (
         this.registerValues.user.length > 0 &&
@@ -246,24 +253,27 @@ export default {
         this.registerValues.contrasena.length > 0 &&
         this.registerValues.confirmPass.length > 0
       ) {
-        const salt = bcrypt.genSaltSync(10);
-        this.registerValues.contrasena = bcrypt.hashSync(
-          this.registerValues.contrasena,
-          salt
-        );
+      let arraybase64 = this.imagen.split("/");
+      let compatible_base64 = "";
+      let i = 0;
+      for await(let str of arraybase64){
+        if(i >= 2){
+          compatible_base64 += "/"+str;
+        }
+        i++;
+      }        
         let user = {
-          user: this.registerValues.user,
-          correo: this.registerValues.correo,
-          nombre: this.registerValues.user,
-          contrasena: this.registerValues.contrasena,
-          imagen_url:
-            "https://i.pinimg.com/originals/2c/68/a2/2c68a2099526c36259b51f707e5e66f7.jpg",
-          idRol: 2,
+          nickname: this.registerValues.user,
+          email: this.registerValues.correo,
+          name: this.registerValues.user,
+          password: this.registerValues.contrasena,
+          imagen: compatible_base64,
+          bot: 0,
         };
         console.log(user);
 
         this.axios
-          .post("/register", user)
+          .post("/signup", user)
           .then((response) => {
             if (response.data.status === true) {
               this.mensajeOk();
@@ -278,7 +288,6 @@ export default {
           .catch((error) => {
             console.log(error);
           });
-        this.mensajeOk();
       } else {
         Swal.fire({
           icon: "error",
