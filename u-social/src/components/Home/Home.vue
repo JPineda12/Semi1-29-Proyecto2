@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Sidebar @change="show($event)" />
+    <Sidebar @change="show($event)" :User="User" />
     <div class="comps" :style="{ 'margin-left': sidebarWidth }">
       <Posts class="comp" v-if="showPosts" />
       <Chat class="comp" v-if="showChat" />
@@ -24,12 +24,17 @@ export default {
   unmounted() {
     document.querySelector("html").classList.remove("prueba");
   },
+  beforeMount() {
+    let us = localStorage.getItem("user-info");
+    this.User = JSON.parse(us);
+  },
 
   setup() {
     return { sidebarWidth };
   },
   data() {
     return {
+      User: {},
       showPosts: true,
       showChat: false,
       showUsers: false,

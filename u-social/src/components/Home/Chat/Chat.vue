@@ -6,7 +6,7 @@
         v-for="user of Friends"
         :key="user.idUsuario"
         class="card-top"
-        @click = "openChat(user)"
+        @click="openChat(user)"
       >
         <div class="card-image">
           <img :src="user.imagen_url" />
@@ -16,15 +16,13 @@
         </div>
       </div>
     </div>
-  <ChatWindow
-    v-if="isChatVisible"
-    :chatFriend="chatFriend ? chatFriend : ''"
-    :user="user ? user: ''"
-    @close = "closeChat()"
-  />    
+    <ChatWindow
+      v-if="isChatVisible"
+      :chatFriend="chatFriend ? chatFriend : ''"
+      :user="user ? user : ''"
+      @close="closeChat()"
+    />
   </div>
-
-
 </template>
 
 <script>
@@ -37,43 +35,42 @@ export default {
   data() {
     return {
       Friends: [],
-      chatFriend: null,
+      chatFriend: {},
       isChatVisible: false,
-      user: null,
+      user: {},
     };
   },
   beforeMount() {
+    let us = localStorage.getItem("user-info");
+    this.user = JSON.parse(us);    
     this.getFriends();
   },
   methods: {
     getFriends() {
-      let us = {
-        idUsuario: 3,
-        nombre: "Test User",
-        imagen_url:
-          "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
-      };
-      this.Friends.push(us);
-      this.Friends.push(us);
-      this.Friends.push(us);
-      this.Friends.push(us);
-      this.Friends.push(us);
-      this.Friends.push(us);
-
+      this.axios
+        .get(`/friends/${this.user.idUsuario}`)
+        .then((response) => {
+          for (let i = 0; i < response.data.length; i++) {
+            let us = {
+              idUsuario: response.data[i].idUsuario,
+              nombre: response.data[i].username,
+              imagen_url: response.data[i].img_url,
+              //"https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
+            };
+            this.Friends.push(us);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     openChat(friend) {
       this.chatFriend = friend;
-      this.user = {
-        idUsuario: 1,
-        nombre: "Test User",
-        imagen_url:
-          "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
-      };
-      this.isChatVisible = true;      
+      this.isChatVisible = true;
     },
-    closeChat(){
-      this.isChatVisible = false
-    }
+    closeChat() {
+      this.isChatVisible = false;
+    },
   },
 };
 </script>
@@ -133,7 +130,8 @@ svg:hover {
   display: flex;
 }
 .card-image img {
-  width: 100%;
+  width: 200px;
+  height: 300px;
   object-fit: cover;
 }
 .card-top img {
@@ -192,5 +190,8 @@ svg:hover {
   .card-text {
     width: 62% !important;
   }
+}
+.card-text,.card-top{
+  min-height: 50px;
 }
 </style>

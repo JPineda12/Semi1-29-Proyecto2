@@ -42,6 +42,10 @@ export default {
   methods: {
     getTags() {
       this.Tags = [];
+      this.Tags.push({
+        idTag: 0,
+        Etiqueta: "Todos",
+      });
       this.axios.get("/tags").then((response) => {
         for (let i = 0; i < response.data.length; i++) {
           this.Tags.push(response.data[i]);
@@ -54,7 +58,7 @@ export default {
         this.FilteredPosts = this.Posts;
       } else {
         for await (let p of this.Posts) {
-          for(let x = 0; x < p.tags.length; x++) {
+          for (let x = 0; x < p.tags.length; x++) {
             let tag = p.tags[x];
             if (tag.etiqueta.toLowerCase() === nombreEtiqueta.toLowerCase()) {
               this.FilteredPosts.push(p);

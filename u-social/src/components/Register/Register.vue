@@ -178,6 +178,7 @@ export default {
       },
       imagen: "",
       imagenBase64: "",
+      compatible_base64: "",
       isCameraOpen: false,
       canvasHeight: 170,
       canvasWidth: 170,
@@ -222,11 +223,11 @@ export default {
       });
     },
 
-    capture(event) {
+    async capture(event) {
       event.preventDefault();
       const FLASH_TIMEOUT = 50;
       let self = this;
-      setTimeout(() => {
+      setTimeout(async () => {
         const context = self.$refs.canvas.getContext("2d");
         context.drawImage(
           self.$refs.camera,
@@ -238,8 +239,17 @@ export default {
         const dataUrl = self.$refs.canvas
           .toDataURL("image/jpeg")
           .replace("image/jpeg", "image/octet-stream");
-        this.imagen = dataUrl;
-        this.imagenBase64 = dataUrl;
+      this.imagen = dataUrl;
+      this.imagenBase64 = dataUrl;
+      let arraybase64 = this.imagen.split("/");
+      this.compatible_base64 = "";
+      let i = 0;
+      for await(let str of arraybase64){
+        if(i >= 2){
+          this.compatible_base64 += "/"+str;
+        }
+        i++;
+      }          
         self.isCameraOpen = false;
         self.stopCameraStream();
       }, FLASH_TIMEOUT);
@@ -253,21 +263,13 @@ export default {
         this.registerValues.contrasena.length > 0 &&
         this.registerValues.confirmPass.length > 0
       ) {
-      let arraybase64 = this.imagen.split("/");
-      let compatible_base64 = "";
-      let i = 0;
-      for await(let str of arraybase64){
-        if(i >= 2){
-          compatible_base64 += "/"+str;
-        }
-        i++;
-      }        
+      
         let user = {
           nickname: this.registerValues.user,
           email: this.registerValues.correo,
           name: this.registerValues.user,
           password: this.registerValues.contrasena,
-          imagen: compatible_base64,
+          imagen: this.compatible_base64,
           bot: 0,
         };
         console.log(user);
@@ -320,12 +322,17 @@ export default {
         const file = event.target.files[0];
         this.imagen = URL.createObjectURL(file);
         this.createBase64Image(file);
+        console.log("WAT: ",this.imagen);
       });
     },
     createBase64Image(fileObject) {
       var reader = new FileReader();
       reader.onload = (e) => {
         this.imagenBase64 = e.target.result;
+        this.imagen = e.target.result;
+        this.compatible_base64 = this.imagen.split(",")[1];
+        console.log(this.compatible_base64);
+
       };
       reader.readAsDataURL(fileObject);
     },

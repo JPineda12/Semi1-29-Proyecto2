@@ -18,6 +18,13 @@ var ApiRoutes = /** @class */ (function () {
         this.router.post('/new-post', apiController_1.apiController.newPost);
         this.router.post('/new-tag', apiController_1.apiController.newTag);
         this.router.post('/post-tags', apiController_1.apiController.publicacionesNTags);
+        this.router.get('/friends/:iduser', apiController_1.apiController.getAllFriends);
+        this.router.get('/requests/:iduser', apiController_1.apiController.getAllFriendRequests);
+        this.router.get('/users/:iduser', apiController_1.apiController.getAllExceptFriends);
+        this.router.put('/reject', apiController_1.apiController.rejectRequest);
+        this.router.put('/confirm', apiController_1.apiController.confirmRequest);
+        this.router.put('/send-again', apiController_1.apiController.sendRequest_Again);
+        this.router.post('/send-request', apiController_1.apiController.sendRequest);
     };
     return ApiRoutes;
 }());

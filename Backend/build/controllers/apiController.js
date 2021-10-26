@@ -48,9 +48,229 @@ var uuid_1 = require("uuid");
 var ApiController = /** @class */ (function () {
     function ApiController() {
     }
+    ApiController.prototype.sendRequest = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, idAmigo1, idAmigo2, sql0, result0, sql, result, err_1, err_2;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = req.body, idAmigo1 = _a.idAmigo1, idAmigo2 = _a.idAmigo2;
+                        sql0 = "UPDATE Solicitud_Amistad \n    SET idEstado = 3\n    WHERE idAmigo1 = ?\n    AND idAmigo2 = ?";
+                        return [4 /*yield*/, database_1.default.query(sql0, [idAmigo1, idAmigo2])];
+                    case 1:
+                        result0 = _b.sent();
+                        _b.label = 2;
+                    case 2:
+                        _b.trys.push([2, 8, , 9]);
+                        if (!(result0.changedRows > 0)) return [3 /*break*/, 3];
+                        res.status(200).json({
+                            status: true,
+                            result: "Solicitud Enviada Correctamente (updated)",
+                        });
+                        return [3 /*break*/, 7];
+                    case 3:
+                        sql = "INSERT INTO Solicitud_Amistad(idAmigo1, idAmigo2, idEstado)\n        VALUES(?,?, 3)";
+                        _b.label = 4;
+                    case 4:
+                        _b.trys.push([4, 6, , 7]);
+                        return [4 /*yield*/, database_1.default.query(sql, [idAmigo1, idAmigo2])];
+                    case 5:
+                        result = _b.sent();
+                        res.status(200).json({
+                            status: true,
+                            result: "Solicitud Enviada Correctamente (inserted)",
+                        });
+                        return [3 /*break*/, 7];
+                    case 6:
+                        err_1 = _b.sent();
+                        res.status(200).json({ status: false, result: "Ocurrio un error" });
+                        console.log("ERROR: " + err_1);
+                        return [3 /*break*/, 7];
+                    case 7: return [3 /*break*/, 9];
+                    case 8:
+                        err_2 = _b.sent();
+                        res.status(200).json({ status: false, result: "Ocurrio un error" });
+                        console.log("ERROR: " + err_2);
+                        return [3 /*break*/, 9];
+                    case 9: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ApiController.prototype.sendRequest_Again = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, idAmigo1, idAmigo2, sql, result, sql2, result2, err_3, err_4;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = req.body, idAmigo1 = _a.idAmigo1, idAmigo2 = _a.idAmigo2;
+                        sql = "UPDATE Solicitud_Amistad \n    SET idEstado = 3\n    WHERE idAmigo1 = ?\n    AND idAmigo2 = ?";
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 7, , 8]);
+                        return [4 /*yield*/, database_1.default.query(sql, [idAmigo1, idAmigo2])];
+                    case 2:
+                        result = _b.sent();
+                        sql2 = "UPDATE Solicitud_Amistad \n      SET idEstado = 3\n      WHERE idAmigo1 = ?\n      AND idAmigo2 = ?";
+                        _b.label = 3;
+                    case 3:
+                        _b.trys.push([3, 5, , 6]);
+                        return [4 /*yield*/, database_1.default.query(sql2, [idAmigo2, idAmigo1])];
+                    case 4:
+                        result2 = _b.sent();
+                        res.status(200).json({
+                            status: true,
+                            result: "Solicitud Aceptada Correctamente",
+                        });
+                        return [3 /*break*/, 6];
+                    case 5:
+                        err_3 = _b.sent();
+                        res.status(200).json({
+                            status: false,
+                            result: "Ocurrio un error al insertar en Solicitud_Amistad ACEPTADA",
+                        });
+                        console.log("ERROR: " + err_3);
+                        return [3 /*break*/, 6];
+                    case 6: return [3 /*break*/, 8];
+                    case 7:
+                        err_4 = _b.sent();
+                        res.status(200).json({
+                            status: false,
+                            result: "Ocurrio un error al hacer UPDATE en Solicitud_Amistad",
+                        });
+                        console.log("ERROR: " + err_4);
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ApiController.prototype.confirmRequest = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, idAmigo1, idAmigo2, sql, result, sql2, result2, sql3, result3, err_5, err_6, err_7;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = req.body, idAmigo1 = _a.idAmigo1, idAmigo2 = _a.idAmigo2;
+                        sql = "UPDATE Solicitud_Amistad \n    SET idEstado = 1\n    WHERE idAmigo1 = ?\n    AND idAmigo2 = ?";
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 12, , 13]);
+                        return [4 /*yield*/, database_1.default.query(sql, [idAmigo1, idAmigo2])];
+                    case 2:
+                        result = _b.sent();
+                        sql2 = "UPDATE Solicitud_Amistad \n      SET idEstado = 1\n      WHERE idAmigo1 = ?\n      AND idAmigo2 = ?";
+                        _b.label = 3;
+                    case 3:
+                        _b.trys.push([3, 10, , 11]);
+                        return [4 /*yield*/, database_1.default.query(sql2, [idAmigo2, idAmigo1])];
+                    case 4:
+                        result2 = _b.sent();
+                        console.log("RESULT2: ", result2);
+                        if (!(result2.changedRows > 0)) return [3 /*break*/, 5];
+                        res.status(200).json({
+                            status: true,
+                            result: "Solicitud Aceptada Correctamente",
+                        });
+                        return [3 /*break*/, 9];
+                    case 5:
+                        sql3 = "INSERT INTO Solicitud_Amistad(idAmigo1, idAmigo2, idEstado)\n          VALUES(?,?,1)";
+                        _b.label = 6;
+                    case 6:
+                        _b.trys.push([6, 8, , 9]);
+                        return [4 /*yield*/, database_1.default.query(sql3, [idAmigo2, idAmigo1])];
+                    case 7:
+                        result3 = _b.sent();
+                        console.log("RESULT 3: ", result3);
+                        res.status(200).json({
+                            status: true,
+                            result: "Solicitud Aceptada Correctamente",
+                        });
+                        return [3 /*break*/, 9];
+                    case 8:
+                        err_5 = _b.sent();
+                        res.status(200).json({
+                            status: false,
+                            result: "Ocurrio un error al insertar en Solicitud_Amistad ACEPTADA",
+                        });
+                        console.log("ERROR: " + err_5);
+                        return [3 /*break*/, 9];
+                    case 9: return [3 /*break*/, 11];
+                    case 10:
+                        err_6 = _b.sent();
+                        res.status(200).json({
+                            status: false,
+                            result: "Ocurrio un error al insertar en Solicitud_Amistad ACEPTADA",
+                        });
+                        console.log("ERROR: " + err_6);
+                        return [3 /*break*/, 11];
+                    case 11: return [3 /*break*/, 13];
+                    case 12:
+                        err_7 = _b.sent();
+                        res.status(200).json({
+                            status: false,
+                            result: "Ocurrio un error al hacer UPDATE en Solicitud_Amistad",
+                        });
+                        console.log("ERROR: " + err_7);
+                        return [3 /*break*/, 13];
+                    case 13: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ApiController.prototype.rejectRequest = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, idAmigo1, idAmigo2, sql, result, sql2, result2, err_8, err_9;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = req.body, idAmigo1 = _a.idAmigo1, idAmigo2 = _a.idAmigo2;
+                        sql = "UPDATE Solicitud_Amistad \n    SET idEstado = 2\n    WHERE idAmigo1 = ?\n    AND idAmigo2 = ?";
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 7, , 8]);
+                        return [4 /*yield*/, database_1.default.query(sql, [idAmigo1, idAmigo2])];
+                    case 2:
+                        result = _b.sent();
+                        console.log("RESULT1: ", result);
+                        sql2 = "INSERT INTO Solicitud_Amistad(idAmigo1, idAmigo2, idEstado)\n      VALUES(?,?,2)";
+                        _b.label = 3;
+                    case 3:
+                        _b.trys.push([3, 5, , 6]);
+                        return [4 /*yield*/, database_1.default.query(sql2, [idAmigo2, idAmigo1])];
+                    case 4:
+                        result2 = _b.sent();
+                        console.log("RESULT2: " + result2);
+                        res.status(200).json({
+                            status: true,
+                            result: "Solicitud Rechazada Correctamente",
+                        });
+                        return [3 /*break*/, 6];
+                    case 5:
+                        err_8 = _b.sent();
+                        res.status(200).json({
+                            status: false,
+                            result: "Ocurrio un error al insertar en Solicitud_Amistad RECHAZADA",
+                        });
+                        console.log("ERROR: " + err_8);
+                        return [3 /*break*/, 6];
+                    case 6: return [3 /*break*/, 8];
+                    case 7:
+                        err_9 = _b.sent();
+                        res.status(200).json({
+                            status: false,
+                            result: "Ocurrio un error al hacer UPDATE en Solicitud_Amistad",
+                        });
+                        console.log("ERROR: " + err_9);
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/];
+                }
+            });
+        });
+    };
     ApiController.prototype.getAllTags = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var sql, result, err_1;
+            var sql, result, err_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -69,9 +289,102 @@ var ApiController = /** @class */ (function () {
                         }
                         return [3 /*break*/, 4];
                     case 3:
-                        err_1 = _a.sent();
+                        err_10 = _a.sent();
                         res.json([]);
-                        console.log("ERROR: " + err_1);
+                        console.log("ERROR: " + err_10);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ApiController.prototype.getAllFriends = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var iduser, sql, result, err_11;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        iduser = req.params.iduser;
+                        sql = "SELECT u.idUsuario, u.username, u.img_url \n    FROM Usuario u, Solicitud_Amistad s\n    WHERE s.idAmigo1 = ?\n    AND s.idEstado = 1\n    AND s.idAmigo2 = u.idUsuario";
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, database_1.default.query(sql, [iduser])];
+                    case 2:
+                        result = _a.sent();
+                        if (result.length > 0) {
+                            res.json(result);
+                        }
+                        else {
+                            res.json([]);
+                        }
+                        return [3 /*break*/, 4];
+                    case 3:
+                        err_11 = _a.sent();
+                        res.json([]);
+                        console.log("ERROR: " + err_11);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ApiController.prototype.getAllExceptFriends = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var iduser, sql, result, err_12;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        iduser = req.params.iduser;
+                        sql = "SELECT u.idUsuario, u.username, u.img_url, e.estado\n    FROM Usuario u, Solicitud_Amistad s, estado_amistad e\n    WHERE s.idAmigo1 = " + iduser + "\n    AND s.idEstado <> 1\n    AND s.idAmigo2 = u.idUsuario\n    AND e.idEstadoAmistad = s.idEstado\n    UNION\n    SELECT u.idUsuario, u.username, u.img_url, 'NO-FRIENDS'\n    FROM Usuario u\n    WHERE u.idUsuario <> " + iduser + "\n    AND u.idUsuario NOT IN (SELECT s2.idAmigo1\n                            FROM Solicitud_Amistad s2\n                            WHERE s2.idAmigo2 =" + iduser + ");";
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, database_1.default.query(sql, [iduser])];
+                    case 2:
+                        result = _a.sent();
+                        if (result.length > 0) {
+                            res.json(result);
+                        }
+                        else {
+                            res.json([]);
+                        }
+                        return [3 /*break*/, 4];
+                    case 3:
+                        err_12 = _a.sent();
+                        res.json([]);
+                        console.log("ERROR: " + err_12);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ApiController.prototype.getAllFriendRequests = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var iduser, sql, result, err_13;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        iduser = req.params.iduser;
+                        sql = "SELECT u.idUsuario, u.username, u.img_url \n    FROM Usuario u, Solicitud_Amistad s\n    WHERE s.idAmigo2 = ?\n    AND s.idEstado = 3\n    AND s.idAmigo1 = u.idUsuario";
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, database_1.default.query(sql, [iduser])];
+                    case 2:
+                        result = _a.sent();
+                        if (result.length > 0) {
+                            res.json(result);
+                        }
+                        else {
+                            res.json([]);
+                        }
+                        return [3 /*break*/, 4];
+                    case 3:
+                        err_13 = _a.sent();
+                        res.json([]);
+                        console.log("ERROR: " + err_13);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -80,7 +393,7 @@ var ApiController = /** @class */ (function () {
     };
     ApiController.prototype.getUserByName = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var username, sql, result, err_2;
+            var username, sql, result, err_14;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -100,9 +413,9 @@ var ApiController = /** @class */ (function () {
                         }
                         return [3 /*break*/, 4];
                     case 3:
-                        err_2 = _a.sent();
+                        err_14 = _a.sent();
                         res.json([]);
-                        console.log("ERROR: " + err_2);
+                        console.log("ERROR: " + err_14);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -111,7 +424,7 @@ var ApiController = /** @class */ (function () {
     };
     ApiController.prototype.getAllPosts = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var sql, result, publicaciones, i, sqlTag, resultTag, err_3;
+            var sql, result, publicaciones, i, sqlTag, resultTag, err_15;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -148,9 +461,9 @@ var ApiController = /** @class */ (function () {
                         _a.label = 8;
                     case 8: return [3 /*break*/, 10];
                     case 9:
-                        err_3 = _a.sent();
+                        err_15 = _a.sent();
                         res.json([]);
-                        console.log("ERROR: " + err_3);
+                        console.log("ERROR: " + err_15);
                         return [3 /*break*/, 10];
                     case 10: return [2 /*return*/];
                 }
@@ -162,7 +475,7 @@ var ApiController = /** @class */ (function () {
             var _a, imagen, texto, idUser, nombrei, buff, params;
             return __generator(this, function (_b) {
                 _a = req.body, imagen = _a.imagen, texto = _a.texto, idUser = _a.idUser;
-                nombrei = "profile-pictures/" + req.body.nickname + "-pp" + "-" + uuid_1.v4() + ".jpg";
+                nombrei = "posts-pictures/" + req.body.nickname + "-pp" + "-" + uuid_1.v4() + ".jpg";
                 buff = Buffer.from(imagen, "base64");
                 params = {
                     Bucket: "p2-bucket-semi1",
@@ -173,7 +486,7 @@ var ApiController = /** @class */ (function () {
                 };
                 s3.upload(params, function sync(err, data) {
                     return __awaiter(this, void 0, void 0, function () {
-                        var sql, result, err_4;
+                        var sql, result, err_16;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
@@ -197,9 +510,9 @@ var ApiController = /** @class */ (function () {
                                     });
                                     return [3 /*break*/, 5];
                                 case 4:
-                                    err_4 = _a.sent();
+                                    err_16 = _a.sent();
                                     res.status(200).json({ status: false, result: "Ocurrio un error" });
-                                    console.log("ERROR: " + err_4);
+                                    console.log("ERROR: " + err_16);
                                     return [3 /*break*/, 5];
                                 case 5: return [2 /*return*/];
                             }
@@ -212,7 +525,7 @@ var ApiController = /** @class */ (function () {
     };
     ApiController.prototype.newTag = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var tag, sql, result, err_5;
+            var tag, sql, result, err_17;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -232,9 +545,9 @@ var ApiController = /** @class */ (function () {
                         });
                         return [3 /*break*/, 4];
                     case 3:
-                        err_5 = _a.sent();
+                        err_17 = _a.sent();
                         res.status(200).json({ status: false, result: "Ocurrio un error" });
-                        console.log("ERROR: " + err_5);
+                        console.log("ERROR: " + err_17);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -243,7 +556,7 @@ var ApiController = /** @class */ (function () {
     };
     ApiController.prototype.publicacionesNTags = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, idTag, idPublicacion, sql, result, err_6;
+            var _a, idTag, idPublicacion, sql, result, err_18;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -260,9 +573,9 @@ var ApiController = /** @class */ (function () {
                             .json({ status: true, result: "Relacion Tag-Publicacion ingresada" });
                         return [3 /*break*/, 4];
                     case 3:
-                        err_6 = _b.sent();
+                        err_18 = _b.sent();
                         res.status(200).json({ status: false, result: "Ocurrio un error" });
-                        console.log("ERROR: " + err_6);
+                        console.log("ERROR: " + err_18);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }

@@ -60,7 +60,11 @@
         </div>
         <div class="card-text">
           <h2>{{ user.nombre }}</h2>
-          <button class="btn-gr" @click="addFriend(user)">
+          <button
+            class="btn-gr"
+            @click="addFriend(user)"
+            :disabled="user.isSent"
+          >
             <svg
               class="w-6 h-6"
               fill="none"
@@ -75,7 +79,7 @@
                 d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
               ></path>
             </svg>
-            <a>Add Friend</a>
+            <a>{{ user.buttonText }}</a>
           </button>
         </div>
       </div>
@@ -84,6 +88,8 @@
 </template>
 
 <script>
+import { useToast } from "vue-toastification";
+
 export default {
   name: "Users",
   data() {
@@ -93,35 +99,167 @@ export default {
     };
   },
   beforeMount() {
-    this.getRequests();
+    let us = localStorage.getItem("user-info");
+    this.User = JSON.parse(us);
     this.getUsuarios();
+    this.getRequests();
   },
 
   methods: {
-    getUsuarios() {
-      let us = {
-        idUsuario: 1,
-        nombre: "Test User",
-        imagen_url:
-          "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
-      };
-      this.Users.push(us);
-      this.Users.push(us);
-      this.Users.push(us);
-      this.Users.push(us);
-      this.Users.push(us);
-      this.Users.push(us);
-    },
     getRequests() {
-      let us = {
-        idUsuario: 1,
-        nombre: "Request User",
-        imagen_url:
-          "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
-      };
-      this.Requests.push(us);
-      console.log("");
+      this.axios
+        .get(`/requests/${this.User.idUsuario}`)
+        .then((response) => {
+          console.log(response);
+
+          for (let i = 0; i < response.data.length; i++) {
+            let us = {
+              idUsuario: response.data[i].idUsuario,
+              nombre: response.data[i].username,
+              //response.data[i].img_url,
+              imagen_url:
+                "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
+            };
+            this.Requests.push(us);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
+    getUsuarios() {
+      this.axios
+        .get(`/users/${this.User.idUsuario}`)
+        .then((response) => {
+          for (let i = 0; i < response.data.length; i++) {
+            let us = {
+              idUsuario: response.data[i].idUsuario,
+              nombre: response.data[i].username,
+              buttonText: "Add Friend",
+              isSent: false,
+              //response.data[i].img_url,
+              imagen_url:
+                "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
+            };
+            if (response.data[i].estado.toUpperCase() === "PENDIENTE") {
+              us.buttonText = "Request Sent";
+              us.isSent = true;
+              this.Users.push(us);
+            } else {
+              this.Users.push(us);
+            }
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    addFriend(newFriend) {
+      console.log("idAmigo1: ", this.User.idUsuario);
+      console.log("idAmigo2: ", newFriend.idUsuario);
+      const toast = useToast();
+      toast.success("¡Solicitud de amistad enviada!", {
+        position: "bottom-left",
+        timeout: 2000,
+        closeOnClick: true,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+        draggable: true,
+        draggablePercent: 0.6,
+        showCloseButtonOnHover: false,
+        hideProgressBar: true,
+        closeButton: "button",
+        icon: true,
+        rtl: false,
+      });
+      newFriend.isSent = true;
+      newFriend.buttonText = "Request Sent";
+      let requestBody = {
+        idAmigo1: this.User.idUsuario,
+        idAmigo2: newFriend.idUsuario,
+      };
+      this.axios
+        .post("send-request", requestBody)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log("error: ", error);
+        });
+    },
+    acceptRequest(newFriend) {
+      console.log("idAmigo1: ", newFriend.idUsuario);
+      console.log("idAmigo2: ", this.User.idUsuario);
+      let requestBody = {
+        idAmigo1: newFriend.idUsuario,
+        idAmigo2: this.User.idUsuario,
+      };
+      this.axios
+        .put("confirm", requestBody)
+        .then((response) => {
+          console.log(response);
+          const toast = useToast();
+          toast.success("¡Solicitud Aceptada!", {
+            position: "bottom-left",
+            timeout: 2000,
+            closeOnClick: true,
+            pauseOnFocusLoss: true,
+            pauseOnHover: true,
+            draggable: true,
+            draggablePercent: 0.6,
+            showCloseButtonOnHover: false,
+            hideProgressBar: true,
+            closeButton: "button",
+            icon: true,
+            rtl: false,
+          });
+          const index = this.Requests.indexOf(newFriend);
+          if (index > -1) {
+            this.Requests.splice(index, 1);
+          }
+        })
+        .catch((error) => {
+          console.log("error: ", error);
+        });
+    },
+    rejectRequest(newFriend) {
+      console.log("idAmigo1: ", newFriend.idUsuario);
+      console.log("idAmigo2: ", this.User.idUsuario);
+      let requestBody = {
+        idAmigo1: newFriend.idUsuario,
+        idAmigo2: this.User.idUsuario,
+      };
+      this.axios
+        .put("reject", requestBody)
+        .then((response) => {
+          console.log(response);
+          const toast = useToast();
+          toast.warning("¡Solicitud Rechazada!", {
+            position: "bottom-left",
+            timeout: 2000,
+            closeOnClick: true,
+            pauseOnFocusLoss: true,
+            pauseOnHover: true,
+            draggable: true,
+            draggablePercent: 0.6,
+            showCloseButtonOnHover: false,
+            hideProgressBar: true,
+            closeButton: "button",
+            icon: true,
+            rtl: false,
+          });
+          const index = this.Requests.indexOf(newFriend);
+          if (index > -1) {
+            this.Requests.splice(index, 1);
+          }
+          newFriend.buttonText = "Add Friend";
+          newFriend.isSent = false;
+          this.Users.push(newFriend);
+        })
+        .catch((error) => {
+          console.log("error: ", error);
+        });
+    },    
   },
 };
 </script>
@@ -145,6 +283,7 @@ button {
   font-size: 95%;
   transition-duration: 0.25s;
 }
+
 button:hover {
   background-color: #48e455;
 }
@@ -191,7 +330,8 @@ svg:hover {
   display: flex;
 }
 .card-image img {
-  width: 100%;
+  width: 200px;
+  height: 300px;
   object-fit: cover;
 }
 .card-top img {
@@ -200,68 +340,36 @@ svg:hover {
 .card-text h2 {
   align-content: center;
   color: #dedde5;
-  margin-left: 25%;
+  margin-left: 10%;
 }
 .card-top .card-text {
   height: auto;
   width: auto;
+  overflow: hidden;
   padding-bottom: 36.8px;
 }
 .card-text button {
   margin-left: 18%;
 }
-@media (max-width: 200px) {
-  .card-top {
-    flex-direction: row;
-    grid-column: auto / span 2;
-    grid-row: auto / span 1;
-  }
-  .card-bottom {
-    flex-direction: row-reverse;
-    grid-column: auto / span 2;
-    grid-row: auto / span 1;
-  }
-  .card-top .card-image,
-  .card-bottom .card-image {
-    height: 100%;
-    width: 50%;
-  }
-  .card-top img {
-    border-radius: 95.2380952381px 0 0 95.2380952381px;
-  }
-  .card-bottom img {
-    border-radius: 0 95.2380952381px 95.2380952381px 0;
-  }
-  .card-top .card-text {
-    height: auto;
-    width: 50%;
-    padding-right: 36.8px;
-  }
-  .card-bottom .card-text {
-    height: auto;
-    width: 50%;
-    padding-left: 36.8px;
-  }
-}
-@media (max-width: 200px) {
-  .card-image {
-    width: 38% !important;
-  }
-  .card-text {
-    width: 62% !important;
-  }
-}
+
 
 #user-request button {
-  width: 160px;
+  width: 120px;
   margin-bottom: 5px;
-  margin-left: 30px;
+  margin-left: 20%;
 }
-.btn-accept:hover{
-  background-color:rgb(0, 255, 13);
+.btn-accept:hover {
+  background-color: rgb(0, 255, 13);
 }
 
-.btn-reject:hover{
+.btn-reject:hover {
   background-color: rgb(255, 14, 14);
+}
+button[disabled] {
+  pointer-events: none;
+  background-color: rgb(97, 97, 97);
+}
+.card-text,.card-top{
+  min-height: 200px;
 }
 </style>

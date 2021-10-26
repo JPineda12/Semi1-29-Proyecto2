@@ -7,7 +7,7 @@
       <span v-else>
         <div class="profile">
           <img :src="logo" />
-          <h3>Naruto Uzumaki</h3>
+          <h3>{{User.username}}</h3>
         </div>
       </span>
     </h1>
@@ -61,6 +61,9 @@ import SidebarLink from "./SidebarLink";
 export default {
   name: "Sidebar",
   emits: ["change"],
+  props: {
+    User: { type: Object, required: true },
+  },
   components: {
     SidebarLink,
   },
@@ -136,7 +139,7 @@ export default {
   border-radius: 13px;
   position: relative;
   margin-bottom: -15px;
-  left: 25%;
+  right: 10px;
 }
 
 .profile {
