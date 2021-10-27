@@ -447,9 +447,40 @@ var ApiController = /** @class */ (function () {
             });
         });
     };
+    ApiController.prototype.getTestUsers = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var username, sql, result, err_15;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        username = req.params.username;
+                        sql = "SELECT idUsuario, username, img_url From Usuario";
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, database_1.default.query(sql, [username])];
+                    case 2:
+                        result = _a.sent();
+                        if (result.length > 0) {
+                            res.json(result);
+                        }
+                        else {
+                            res.json([]);
+                        }
+                        return [3 /*break*/, 4];
+                    case 3:
+                        err_15 = _a.sent();
+                        res.json([]);
+                        console.log("ERROR: " + err_15);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
     ApiController.prototype.getAllPosts = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var sql, result, publicaciones, i, sqlTag, resultTag, err_15;
+            var sql, result, publicaciones, i, sqlTag, resultTag, err_16;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -486,9 +517,9 @@ var ApiController = /** @class */ (function () {
                         _a.label = 8;
                     case 8: return [3 /*break*/, 10];
                     case 9:
-                        err_15 = _a.sent();
+                        err_16 = _a.sent();
                         res.json([]);
-                        console.log("ERROR: " + err_15);
+                        console.log("ERROR: " + err_16);
                         return [3 /*break*/, 10];
                     case 10: return [2 /*return*/];
                 }
@@ -511,7 +542,7 @@ var ApiController = /** @class */ (function () {
                 };
                 s3.upload(params, function sync(err, data) {
                     return __awaiter(this, void 0, void 0, function () {
-                        var sql, result, err_16;
+                        var sql, result, err_17;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
@@ -535,9 +566,9 @@ var ApiController = /** @class */ (function () {
                                     });
                                     return [3 /*break*/, 5];
                                 case 4:
-                                    err_16 = _a.sent();
+                                    err_17 = _a.sent();
                                     res.status(200).json({ status: false, result: "Ocurrio un error" });
-                                    console.log("ERROR: " + err_16);
+                                    console.log("ERROR: " + err_17);
                                     return [3 /*break*/, 5];
                                 case 5: return [2 /*return*/];
                             }
@@ -550,7 +581,7 @@ var ApiController = /** @class */ (function () {
     };
     ApiController.prototype.newTag = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var tag, sql, result, err_17;
+            var tag, sql, result, err_18;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -570,9 +601,9 @@ var ApiController = /** @class */ (function () {
                         });
                         return [3 /*break*/, 4];
                     case 3:
-                        err_17 = _a.sent();
+                        err_18 = _a.sent();
                         res.status(200).json({ status: false, result: "Ocurrio un error" });
-                        console.log("ERROR: " + err_17);
+                        console.log("ERROR: " + err_18);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -581,7 +612,7 @@ var ApiController = /** @class */ (function () {
     };
     ApiController.prototype.publicacionesNTags = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, idTag, idPublicacion, sql, result, err_18;
+            var _a, idTag, idPublicacion, sql, result, err_19;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -598,9 +629,9 @@ var ApiController = /** @class */ (function () {
                             .json({ status: true, result: "Relacion Tag-Publicacion ingresada" });
                         return [3 /*break*/, 4];
                     case 3:
-                        err_18 = _b.sent();
+                        err_19 = _b.sent();
                         res.status(200).json({ status: false, result: "Ocurrio un error" });
-                        console.log("ERROR: " + err_18);
+                        console.log("ERROR: " + err_19);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }

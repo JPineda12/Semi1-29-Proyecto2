@@ -17,6 +17,7 @@ class ApiRoutes {
 
         this.router.get('/tags', apiController.getAllTags);
         this.router.get('/user/:username', apiController.getUserByName);
+        this.router.get('/testusers', apiController.getTestUsers);
         this.router.get('/posts', apiController.getAllPosts);
         this.router.post('/new-post', apiController.newPost);
         this.router.post('/new-tag', apiController.newTag);

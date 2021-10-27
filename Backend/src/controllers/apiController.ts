@@ -278,6 +278,21 @@ class ApiController {
       console.log("ERROR: " + err);
     }
   }
+  public async getTestUsers(req: Request, res: Response) {
+    const username = req.params.username;
+    let sql = `SELECT idUsuario, username, img_url From Usuario`;
+    try {
+      const result = await pool.query(sql, [username]);
+      if (result.length > 0) {
+        res.json(result);
+      } else {
+        res.json([]);
+      }
+    } catch (err) {
+      res.json([]);
+      console.log("ERROR: " + err);
+    }
+  }
 
   public async getAllPosts(req: Request, res: Response) {
     let sql = `SELECT idPublicacion, url_imagen, texto, u.username as owner

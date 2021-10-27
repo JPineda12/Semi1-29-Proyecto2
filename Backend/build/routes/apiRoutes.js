@@ -15,6 +15,7 @@ var ApiRoutes = /** @class */ (function () {
         this.router.put('/edit-profile', userController_1.userController.editProfileCognito);
         this.router.get('/tags', apiController_1.apiController.getAllTags);
         this.router.get('/user/:username', apiController_1.apiController.getUserByName);
+        this.router.get('/testusers', apiController_1.apiController.getTestUsers);
         this.router.get('/posts', apiController_1.apiController.getAllPosts);
         this.router.post('/new-post', apiController_1.apiController.newPost);
         this.router.post('/new-tag', apiController_1.apiController.newTag);
