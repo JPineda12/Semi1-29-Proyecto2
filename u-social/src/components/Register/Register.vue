@@ -322,7 +322,6 @@ export default {
         const file = event.target.files[0];
         this.imagen = URL.createObjectURL(file);
         this.createBase64Image(file);
-        console.log("WAT: ",this.imagen);
       });
     },
     createBase64Image(fileObject) {

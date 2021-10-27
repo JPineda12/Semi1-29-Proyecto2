@@ -284,7 +284,7 @@ export default {
     },
     LoginCreds() {
       this.axios.post("/login", this.LoginValues).then((response) => {
-        console.log(response);
+        console.log(response.data);
         if (response.data.code === "UserNotConfirmedException") {
           this.txtError = "Usuario sin CONFIRMAR";
           this.LoginValues.password = "";
@@ -296,7 +296,15 @@ export default {
           this.LoginValues.password = "";
         } else {
           this.axios.get(`/user/${this.LoginValues.username}`).then((res) => {
-            localStorage.setItem("user-info", JSON.stringify(res.data[0]));
+            let usuario = {
+              idUsuario: res.data[0].idUsuario,
+              username: res.data[0].username,
+              img_url: res.data[0].img_url,
+              name: response.data.idToken.payload.name,
+              botmode: response.data.idToken.payload['custom:botmode'],
+              email: response.data.idToken.payload.email
+            }
+            localStorage.setItem("user-info", JSON.stringify(usuario));
             this.$router.push({ name: "Home" });
             this.LoginValues.password = "";
             this.LoginValues.username = "";

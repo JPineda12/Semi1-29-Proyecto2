@@ -48,6 +48,31 @@ var uuid_1 = require("uuid");
 var ApiController = /** @class */ (function () {
     function ApiController() {
     }
+    ApiController.prototype.translatePost = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var translate, postText, params;
+            return __generator(this, function (_a) {
+                translate = new aws_sdk_1.default.Translate(creds_1.default.translate);
+                postText = req.body.text;
+                params = {
+                    SourceLanguageCode: "auto",
+                    TargetLanguageCode: "es",
+                    Text: postText || "Hello there",
+                };
+                translate.translateText(params, function (err, data) {
+                    if (err) {
+                        console.log(err, err.stack);
+                        res.send({ error: err });
+                    }
+                    else {
+                        console.log(data);
+                        res.send({ message: data });
+                    }
+                });
+                return [2 /*return*/];
+            });
+        });
+    };
     ApiController.prototype.sendRequest = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, idAmigo1, idAmigo2, sql0, result0, sql, result, err_1, err_2;

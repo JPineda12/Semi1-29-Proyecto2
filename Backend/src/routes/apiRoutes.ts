@@ -12,6 +12,8 @@ class ApiRoutes {
         this.router.post('/login', userController.loginCognito);
         this.router.post('/login-face', userController.loginFace);        
         this.router.post('/signup', userController.signup);
+        this.router.put('/edit-profile', userController.editProfileCognito);
+
 
         this.router.get('/tags', apiController.getAllTags);
         this.router.get('/user/:username', apiController.getUserByName);
@@ -23,6 +25,7 @@ class ApiRoutes {
         this.router.get('/friends/:iduser', apiController.getAllFriends);
         this.router.get('/requests/:iduser', apiController.getAllFriendRequests);
         this.router.get('/users/:iduser', apiController.getAllExceptFriends);
+        this.router.post('/translate/', apiController.translatePost);
         this.router.put('/reject', apiController.rejectRequest);
         this.router.put('/confirm', apiController.confirmRequest);
         this.router.put('/send-again', apiController.sendRequest_Again);

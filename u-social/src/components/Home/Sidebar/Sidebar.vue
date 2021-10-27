@@ -7,7 +7,16 @@
       <span v-else>
         <div class="profile">
           <img :src="logo" />
-          <h3>{{User.username}}</h3>
+          
+          <SidebarLink
+            :to="compActivo"
+            name="EditPerfil"
+            icon="fas fa-user-circle"
+            @click="changeTo('EditPerfil')"
+            class="user"
+          >
+            {{ User.username }}
+          </SidebarLink>
         </div>
       </span>
     </h1>
@@ -158,5 +167,9 @@ h1 {
   min-height: 30px;
   max-width: 30px;
   max-height: 30px;
+}
+.user{
+  margin-top: 10px;
+  margin-left: -10px;
 }
 </style>

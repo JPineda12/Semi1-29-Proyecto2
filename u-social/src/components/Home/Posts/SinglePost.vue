@@ -11,9 +11,9 @@
         <div class="taglist" v-for="tag in getTags" :key="tag.idTag">
           <div class="tag">{{ tag.etiqueta }}</div>
         </div>
-
+        <p class="color-text" v-if="translated">From {{ from }} to {{ to }}</p>
         <p class="main-text">{{ getText }}</p>
-        <p class="color-text">Translate post</p>
+        <p class="color-text" @click="translate()">{{ translateText }}</p>
       </div>
     </div>
   </div>
@@ -25,9 +25,18 @@ export default {
   props: {
     Post: { type: Object, required: true },
   },
+  data() {
+    return {
+      translateText: "Translate Post",
+      translated: false,
+      originalText: this.Post.text,
+      from: "",
+      to: "",
+    };
+  },
   computed: {
     getText: function () {
-      return this.Post.text;
+      return this.originalText;
     },
     getOwner: function () {
       return this.Post.owner;
@@ -39,7 +48,28 @@ export default {
       return this.Post.date;
     },
     getImage: function () {
-      return this.Post.image;
+      return "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg"; //this.Post.image; //
+    },
+  },
+  methods: {
+    translate() {
+      if (!this.translated) {
+        let translateBody = {
+          text: this.Post.text,
+        };
+        this.axios.post("/translate", translateBody).then((response) => {
+          console.log("RESPONSE: ", response);
+          this.translateText = "Original Text";
+          this.translated = true;
+          this.originalText = response.data.message.TranslatedText;
+          this.from = response.data.message.SourceLanguageCode.toUpperCase();
+          this.to = response.data.message.TargetLanguageCode.toUpperCase();
+        });
+      } else {
+        this.originalText = this.Post.text;
+        this.translated = false;
+        this.translateText = "Translate Post";
+      }
     },
   },
 };
@@ -186,7 +216,7 @@ export default {
 }
 
 .tag {
-  padding-right:5px;
+  padding-right: 5px;
   padding-left: 5px;
   height: 26px;
   border-radius: 2px;
@@ -211,10 +241,10 @@ p {
   margin: 0;
   margin-bottom: 10px;
 }
-.date-text{
-  color: #A6A9AD;
+.date-text {
+  color: #a6a9ad;
 }
-.main-text{
+.main-text {
   font-size: 18px;
 }
 .r-layout .r-content .color-text {
@@ -225,5 +255,4 @@ p {
   text-decoration: underline;
   cursor: pointer;
 }
-
 </style>

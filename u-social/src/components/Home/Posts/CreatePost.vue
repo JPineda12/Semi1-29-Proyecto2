@@ -63,7 +63,7 @@
 import Swal from "sweetalert2";
 
 export default {
-  name: "FilterList",
+  name: "CreatePost",
   emits: ["posted"],
   props: {
     User: { type: Object, required: true },
@@ -88,12 +88,6 @@ export default {
   },
   methods: {
     handlePhoto(event) {
-      let existeTag = this.Tags.find((obj) => {
-        // Returns the object where
-        // the given property has some value
-        return obj.Etiqueta.toLowerCase() === "todoss";
-      });
-      console.log(existeTag);
       const file = event.target.files[0];
       let extension = file.name.split(".", 2)[1].toLowerCase();
       if (extension === "png" || extension === "jpg" || extension === "jpeg") {

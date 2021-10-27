@@ -6,6 +6,25 @@ const s3 = new AWS.S3(aws_keys.s3);
 import { v4 as uuidv4 } from "uuid";
 
 class ApiController {
+  public async translatePost(req: Request, res: Response) {
+    const translate = new AWS.Translate(aws_keys.translate);
+    const postText = req.body.text;
+    let params = {
+      SourceLanguageCode: "auto",
+      TargetLanguageCode: "es",
+      Text: postText || "Hello there",
+    };
+    translate.translateText(params, function (err, data) {
+      if (err) {
+        console.log(err, err.stack);
+        res.send({ error: err })
+      } else {
+        console.log(data);
+        res.send({ message: data })
+      }
+    });
+  }
+
   public async sendRequest(req: Request, res: Response) {
     const { idAmigo1, idAmigo2 } = req.body;
     let sql0 = `UPDATE Solicitud_Amistad 

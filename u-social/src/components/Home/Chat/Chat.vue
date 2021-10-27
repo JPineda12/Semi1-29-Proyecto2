@@ -54,8 +54,8 @@ export default {
             let us = {
               idUsuario: response.data[i].idUsuario,
               nombre: response.data[i].username,
-              imagen_url: response.data[i].img_url,
-              //"https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
+              imagen_url: //response.data[i].img_url,
+              "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
             };
             this.Friends.push(us);
           }

@@ -101,8 +101,8 @@ export default {
   beforeMount() {
     let us = localStorage.getItem("user-info");
     this.User = JSON.parse(us);
-    this.getUsuarios();
     this.getRequests();
+    this.getUsuarios();
   },
 
   methods: {
@@ -132,21 +132,28 @@ export default {
         .get(`/users/${this.User.idUsuario}`)
         .then((response) => {
           for (let i = 0; i < response.data.length; i++) {
-            let us = {
-              idUsuario: response.data[i].idUsuario,
-              nombre: response.data[i].username,
-              buttonText: "Add Friend",
-              isSent: false,
-              //response.data[i].img_url,
-              imagen_url:
-                "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
-            };
-            if (response.data[i].estado.toUpperCase() === "PENDIENTE") {
-              us.buttonText = "Request Sent";
-              us.isSent = true;
-              this.Users.push(us);
-            } else {
-              this.Users.push(us);
+            let existeUser = this.Users.find((obj) => {
+              // Returns the object where
+              // the given property has some value
+              return obj.nombre.toLowerCase() === response.data[i].username;
+            });
+            if (existeUser === null || existeUser === undefined) {
+              let us = {
+                idUsuario: response.data[i].idUsuario,
+                nombre: response.data[i].username,
+                buttonText: "Add Friend",
+                isSent: false,
+                //response.data[i].img_url,
+                imagen_url:
+                  "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
+              };
+              if (response.data[i].estado.toUpperCase() === "PENDIENTE") {
+                us.buttonText = "Request Sent";
+                us.isSent = true;
+                this.Users.push(us);
+              } else {
+                this.Users.push(us);
+              }
             }
           }
         })
@@ -259,7 +266,7 @@ export default {
         .catch((error) => {
           console.log("error: ", error);
         });
-    },    
+    },
   },
 };
 </script>
@@ -352,7 +359,6 @@ svg:hover {
   margin-left: 18%;
 }
 
-
 #user-request button {
   width: 120px;
   margin-bottom: 5px;
@@ -369,7 +375,8 @@ button[disabled] {
   pointer-events: none;
   background-color: rgb(97, 97, 97);
 }
-.card-text,.card-top{
+.card-text,
+.card-top {
   min-height: 200px;
 }
 </style>

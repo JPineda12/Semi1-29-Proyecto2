@@ -88,9 +88,217 @@ var UserController = /** @class */ (function () {
             });
         });
     };
+    UserController.prototype.editProfileCognito = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var crypto, _a, username, newpassword, password, name, email, botmode, imgbase64, hashOriginal, authenticationData, authenticationDetails, userData, cognitoUser;
+            return __generator(this, function (_b) {
+                crypto = require("crypto");
+                _a = req.body, username = _a.username, newpassword = _a.newpassword, password = _a.password, name = _a.name, email = _a.email, botmode = _a.botmode, imgbase64 = _a.imgbase64;
+                hashOriginal = crypto
+                    .createHash("sha256")
+                    .update(password)
+                    .digest("hex");
+                authenticationData = {
+                    Username: username,
+                    Password: hashOriginal + "D**",
+                };
+                authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+                userData = {
+                    Username: username,
+                    Pool: cognito,
+                };
+                cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+                cognitoUser.setAuthenticationFlowType("USER_PASSWORD_AUTH");
+                cognitoUser.authenticateUser(authenticationDetails, {
+                    onSuccess: function (result) {
+                        // User authentication was successful
+                        var attributelist = [];
+                        var dataname = {
+                            Name: "name",
+                            Value: name,
+                        };
+                        var attributename = new AmazonCognitoIdentity.CognitoUserAttribute(dataname);
+                        attributelist.push(attributename);
+                        var databot = {
+                            Name: "custom:botmode",
+                            Value: botmode,
+                        };
+                        var attributebot = new AmazonCognitoIdentity.CognitoUserAttribute(databot);
+                        attributelist.push(attributebot);
+                        var dataemail = {
+                            Name: "email",
+                            Value: email,
+                        };
+                        var attributeemail = new AmazonCognitoIdentity.CognitoUserAttribute(dataemail);
+                        attributelist.push(attributeemail);
+                        if (imgbase64 === "") {
+                            console.log("NO IMAGE");
+                            if (newpassword === "") {
+                                console.log("NO NEW PASSWORD");
+                                //JUST UPDATE
+                                cognitoUser.updateAttributes(attributelist, function (err, resultUpdt) {
+                                    if (err) {
+                                        res.json(err);
+                                    }
+                                    console.log("call result update attributes: " + resultUpdt);
+                                    res.json(resultUpdt);
+                                });
+                            }
+                            else {
+                                //UPDATE AND CHANGE PASSWORD
+                                console.log("NEW PASSWORD");
+                                var crypto = require("crypto");
+                                var hashNew = crypto
+                                    .createHash("sha256")
+                                    .update(newpassword)
+                                    .digest("hex");
+                                cognitoUser.changePassword(hashOriginal + "D**", hashNew + "D**", function (err, resultChange) {
+                                    if (err) {
+                                        console.log("err: ", err);
+                                        res.json(err);
+                                    }
+                                    console.log("call result change password: " + resultChange);
+                                    cognitoUser.updateAttributes(attributelist, function (err, resultUpdt) {
+                                        if (err) {
+                                            res.json(err);
+                                        }
+                                        console.log("call result: " + resultUpdt);
+                                        res.json(resultUpdt);
+                                    });
+                                });
+                            }
+                        }
+                        else {
+                            //POST TO S3 AND UPDATE
+                            //PLACE img to S3 profile pictures bucket
+                            console.log("NEW IMAGE, PLACE S3");
+                            var nombrei = "profile-pictures/" +
+                                req.body.nickname +
+                                "-pp" +
+                                "-" +
+                                uuid_1.v4() +
+                                ".jpg";
+                            var buff = Buffer.from(imgbase64, "base64");
+                            var params = {
+                                Bucket: "p2-bucket-semi1",
+                                Key: nombrei,
+                                Body: buff,
+                                ContentType: "image",
+                                ACL: "public-read",
+                            };
+                            s3.upload(params, function sync(err, data) {
+                                if (err) {
+                                    res.status(500).send(err);
+                                }
+                                else {
+                                    var dataimagen = {
+                                        Name: "custom:imagen",
+                                        Value: data.Location,
+                                    };
+                                    var attributeimagen = new AmazonCognitoIdentity.CognitoUserAttribute(dataimagen);
+                                    attributelist.push(attributeimagen);
+                                    if (newpassword === "") {
+                                        console.log("NO NEW PASSOWRD");
+                                        //JUST UPDATE
+                                        cognitoUser.updateAttributes(attributelist, function (err, resultUpdt) {
+                                            return __awaiter(this, void 0, void 0, function () {
+                                                var sql, result_1, err_1;
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0:
+                                                            if (err) {
+                                                                res.json(err);
+                                                            }
+                                                            console.log("call result update attributes: " + resultUpdt);
+                                                            sql = "UPDATE Usuario SET img_url = ?\n                     WHERE username=?";
+                                                            _a.label = 1;
+                                                        case 1:
+                                                            _a.trys.push([1, 3, , 4]);
+                                                            return [4 /*yield*/, database_1.default.query(sql, [
+                                                                    data.Location,
+                                                                    username,
+                                                                ])];
+                                                        case 2:
+                                                            result_1 = _a.sent();
+                                                            res.json(resultUpdt);
+                                                            return [3 /*break*/, 4];
+                                                        case 3:
+                                                            err_1 = _a.sent();
+                                                            res
+                                                                .status(200)
+                                                                .json({ status: false, result: "Ocurrio un error" });
+                                                            console.log("ERROR: " + err_1);
+                                                            return [3 /*break*/, 4];
+                                                        case 4: return [2 /*return*/];
+                                                    }
+                                                });
+                                            });
+                                        });
+                                    }
+                                    else {
+                                        //UPDATE AND CHANGE PASSWORD
+                                        var crypto = require("crypto");
+                                        var hashNew = crypto
+                                            .createHash("sha256")
+                                            .update(newpassword)
+                                            .digest("hex");
+                                        cognitoUser.changePassword(hashOriginal + "D**", hashNew + "D**", function (err, resultChange) {
+                                            if (err) {
+                                                res.json(err);
+                                            }
+                                            console.log("call result change password: " + resultChange);
+                                            cognitoUser.updateAttributes(attributelist, function (err, resultUpdt) {
+                                                return __awaiter(this, void 0, void 0, function () {
+                                                    var sql, result_2, err_2;
+                                                    return __generator(this, function (_a) {
+                                                        switch (_a.label) {
+                                                            case 0:
+                                                                if (err) {
+                                                                    res.json(err);
+                                                                }
+                                                                console.log("call result: " + resultUpdt);
+                                                                sql = "UPDATE Usuario SET img_url = ?\n                        WHERE username=?";
+                                                                _a.label = 1;
+                                                            case 1:
+                                                                _a.trys.push([1, 3, , 4]);
+                                                                return [4 /*yield*/, database_1.default.query(sql, [
+                                                                        data.Location,
+                                                                        username,
+                                                                    ])];
+                                                            case 2:
+                                                                result_2 = _a.sent();
+                                                                res.json(resultUpdt);
+                                                                return [3 /*break*/, 4];
+                                                            case 3:
+                                                                err_2 = _a.sent();
+                                                                res
+                                                                    .status(200)
+                                                                    .json({ status: false, result: "Ocurrio un error" });
+                                                                console.log("ERROR: " + err_2);
+                                                                return [3 /*break*/, 4];
+                                                            case 4: return [2 /*return*/];
+                                                        }
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    onFailure: function (err) {
+                        // User authentication was not successful
+                        res.json(err);
+                    },
+                });
+                return [2 /*return*/];
+            });
+        });
+    };
     UserController.prototype.loginFace = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, username, imagen, sql, result, imageToBase64, err_1;
+            var _a, username, imagen, sql, result, imageToBase64, err_3;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -138,9 +346,9 @@ var UserController = /** @class */ (function () {
                         }
                         return [3 /*break*/, 4];
                     case 3:
-                        err_1 = _b.sent();
+                        err_3 = _b.sent();
                         res.json([]);
-                        console.log("ERROR: " + err_1);
+                        console.log("ERROR: " + err_3);
                         console.log("------------- ERROR ------------ ");
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
@@ -207,7 +415,7 @@ var UserController = /** @class */ (function () {
                         console.log(attributelist);
                         var imagen_url_1 = data.Location;
                         cognito.signUp(req.body.nickname, hash + "D**", attributelist, null, function (err, data) { return __awaiter(_this, void 0, void 0, function () {
-                            var sql, result, err_2;
+                            var sql, result, err_4;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
@@ -222,23 +430,21 @@ var UserController = /** @class */ (function () {
                                         _a.trys.push([1, 3, , 4]);
                                         return [4 /*yield*/, database_1.default.query(sql, [
                                                 req.body.nickname,
-                                                imagen_url_1
+                                                imagen_url_1,
                                             ])];
                                     case 2:
                                         result = _a.sent();
-                                        res
-                                            .status(200)
-                                            .json({
+                                        res.status(200).json({
                                             status: true,
                                             result: "Registrado Satisfactoriamente",
                                         });
                                         return [3 /*break*/, 4];
                                     case 3:
-                                        err_2 = _a.sent();
+                                        err_4 = _a.sent();
                                         res
                                             .status(200)
                                             .json({ status: false, result: "Ocurrio un error" });
-                                        console.log("ERROR: " + err_2);
+                                        console.log("ERROR: " + err_4);
                                         return [3 /*break*/, 4];
                                     case 4: return [2 /*return*/];
                                 }

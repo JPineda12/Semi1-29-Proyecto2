@@ -12,6 +12,7 @@ var ApiRoutes = /** @class */ (function () {
         this.router.post('/login', userController_1.userController.loginCognito);
         this.router.post('/login-face', userController_1.userController.loginFace);
         this.router.post('/signup', userController_1.userController.signup);
+        this.router.put('/edit-profile', userController_1.userController.editProfileCognito);
         this.router.get('/tags', apiController_1.apiController.getAllTags);
         this.router.get('/user/:username', apiController_1.apiController.getUserByName);
         this.router.get('/posts', apiController_1.apiController.getAllPosts);
@@ -21,6 +22,7 @@ var ApiRoutes = /** @class */ (function () {
         this.router.get('/friends/:iduser', apiController_1.apiController.getAllFriends);
         this.router.get('/requests/:iduser', apiController_1.apiController.getAllFriendRequests);
         this.router.get('/users/:iduser', apiController_1.apiController.getAllExceptFriends);
+        this.router.post('/translate/', apiController_1.apiController.translatePost);
         this.router.put('/reject', apiController_1.apiController.rejectRequest);
         this.router.put('/confirm', apiController_1.apiController.confirmRequest);
         this.router.put('/send-again', apiController_1.apiController.sendRequest_Again);

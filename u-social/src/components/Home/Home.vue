@@ -5,6 +5,7 @@
       <Posts class="comp" v-if="showPosts" />
       <Chat class="comp" v-if="showChat" />
       <Users class="comp" v-if="showUsers" />
+      <EditPerfil class="comp" :User="User" v-if="showEdit" />
     </div>
   </div>
 </template>
@@ -15,6 +16,7 @@ import { sidebarWidth } from "./Sidebar/state";
 import Posts from "./Posts/Posts.vue";
 import Users from "./Users/Users.vue";
 import Chat from "./Chat/Chat.vue";
+import EditPerfil from "./EditPerfil/EditPerfil";
 
 export default {
   name: "Home",
@@ -38,6 +40,7 @@ export default {
       showPosts: true,
       showChat: false,
       showUsers: false,
+      showEdit: false,
     };
   },
   components: {
@@ -45,6 +48,7 @@ export default {
     Posts,
     Users,
     Chat,
+    EditPerfil,
   },
 
   methods: {
@@ -53,15 +57,22 @@ export default {
         this.showPosts = true;
         this.showChat = false;
         this.showUsers = false;
+        this.showEdit = false;
       } else if (comp === "Chat" && this.showChat === false) {
         this.showPosts = false;
         this.showChat = true;
         this.showUsers = false;
-        console.log;
+        this.showEdit = false;
       } else if (comp === "Users" && this.showUsers === false) {
         this.showPosts = false;
         this.showChat = false;
         this.showUsers = true;
+        this.showEdit = false;
+      } else if (comp === "EditPerfil" && this.showEdit === false) {
+        this.showEdit = true;
+        this.showPosts = false;
+        this.showChat = false;
+        this.showUsers = false;
       }
     },
   },

@@ -67,11 +67,9 @@ export default {
           }
         }
       }
-      console.log("BUSCAR: ", nombreEtiqueta);
-      console.log(this.FilteredPosts);
     },
     newPost(post) {
-      console.log("newPost:", post);
+      console.log(post);
       this.getTags();
       this.getPosts();
     },

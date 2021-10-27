@@ -12,7 +12,7 @@ class UserController {
     var crypto = require("crypto");
     console.log(req.body);
     console.log("req.body.username; ", req.body.username);
-    console.log("password: ", req.body.password)
+    console.log("password: ", req.body.password);
     var hash = crypto
       .createHash("sha256")
       .update(req.body.password)
@@ -42,7 +42,212 @@ class UserController {
       },
     });
   }
+  public async editProfileCognito(req: Request, res: Response) {
+    var crypto = require("crypto");
+    const { username, newpassword, password, name, email, botmode, imgbase64 } =
+      req.body;
+    var hashOriginal = crypto
+      .createHash("sha256")
+      .update(password)
+      .digest("hex");
+    var authenticationData = {
+      Username: username,
+      Password: hashOriginal + "D**",
+    };
+    var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(
+      authenticationData
+    );
+    var userData = {
+      Username: username,
+      Pool: cognito,
+    };
+    var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+    cognitoUser.setAuthenticationFlowType("USER_PASSWORD_AUTH");
 
+    cognitoUser.authenticateUser(authenticationDetails, {
+      onSuccess: function (result: any) {
+        // User authentication was successful
+        var attributelist: any = [];
+
+        var dataname = {
+          Name: "name",
+          Value: name,
+        };
+        var attributename = new AmazonCognitoIdentity.CognitoUserAttribute(
+          dataname
+        );
+        attributelist.push(attributename);
+
+        var databot = {
+          Name: "custom:botmode",
+          Value: botmode,
+        };
+        var attributebot = new AmazonCognitoIdentity.CognitoUserAttribute(
+          databot
+        );
+        attributelist.push(attributebot);
+
+        var dataemail = {
+          Name: "email",
+          Value: email,
+        };
+        var attributeemail = new AmazonCognitoIdentity.CognitoUserAttribute(
+          dataemail
+        );
+        attributelist.push(attributeemail);
+        if (imgbase64 === "") {
+          console.log("NO IMAGE");
+          if (newpassword === "") {
+            console.log("NO NEW PASSWORD");
+            //JUST UPDATE
+            cognitoUser.updateAttributes(
+              attributelist,
+              function (err: any, resultUpdt: any) {
+                if (err) {
+                  res.json(err);
+                }
+                console.log("call result update attributes: " + resultUpdt);
+                res.json(resultUpdt);
+              }
+            );
+          } else {
+            //UPDATE AND CHANGE PASSWORD
+            console.log("NEW PASSWORD");
+            var crypto = require("crypto");
+            var hashNew = crypto
+              .createHash("sha256")
+              .update(newpassword)
+              .digest("hex");
+            cognitoUser.changePassword(
+              hashOriginal + "D**",
+              hashNew + "D**",
+              function (err: any, resultChange: any) {
+                if (err) {
+                  console.log("err: ", err);
+                  res.json(err);
+                }
+                console.log("call result change password: " + resultChange);
+                cognitoUser.updateAttributes(
+                  attributelist,
+                  function (err: any, resultUpdt: any) {
+                    if (err) {
+                      res.json(err);
+                    }
+                    console.log("call result: " + resultUpdt);
+                    res.json(resultUpdt);
+                  }
+                );
+              }
+            );
+          }
+        } else {
+          //POST TO S3 AND UPDATE
+          //PLACE img to S3 profile pictures bucket
+          console.log("NEW IMAGE, PLACE S3");
+          let nombrei =
+            "profile-pictures/" +
+            req.body.nickname +
+            "-pp" +
+            "-" +
+            uuidv4() +
+            ".jpg";
+          let buff = Buffer.from(imgbase64, "base64");
+          const params = {
+            Bucket: "p2-bucket-semi1",
+            Key: nombrei,
+            Body: buff,
+            ContentType: "image",
+            ACL: "public-read",
+          };
+          s3.upload(params, function sync(err: any, data: any) {
+            if (err) {
+              res.status(500).send(err);
+            } else {
+              var dataimagen = {
+                Name: "custom:imagen",
+                Value: data.Location,
+              };
+              var attributeimagen =
+                new AmazonCognitoIdentity.CognitoUserAttribute(dataimagen);
+              attributelist.push(attributeimagen);
+
+              if (newpassword === "") {
+                console.log("NO NEW PASSOWRD");
+                //JUST UPDATE
+                cognitoUser.updateAttributes(
+                  attributelist,
+                  async function (err: any, resultUpdt: any) {
+                    if (err) {
+                      res.json(err);
+                    }
+                    console.log("call result update attributes: " + resultUpdt);
+                    let sql = `UPDATE Usuario SET img_url = ?
+                     WHERE username=?`;
+                    try {
+                      const result = await pool.query(sql, [
+                        data.Location,
+                        username,
+                      ]);
+                      res.json(resultUpdt);
+                    } catch (err) {
+                      res
+                        .status(200)
+                        .json({ status: false, result: "Ocurrio un error" });
+                      console.log("ERROR: " + err);
+                    }
+                  }
+                );
+              } else {
+                //UPDATE AND CHANGE PASSWORD
+                var crypto = require("crypto");
+                var hashNew = crypto
+                  .createHash("sha256")
+                  .update(newpassword)
+                  .digest("hex");
+                cognitoUser.changePassword(
+                  hashOriginal + "D**",
+                  hashNew + "D**",
+                  function (err: any, resultChange: any) {
+                    if (err) {
+                      res.json(err);
+                    }
+                    console.log("call result change password: " + resultChange);
+                    cognitoUser.updateAttributes(
+                      attributelist,
+                     async function (err: any, resultUpdt: any) {
+                        if (err) {
+                          res.json(err);
+                        }
+                        console.log("call result: " + resultUpdt);
+                        let sql = `UPDATE Usuario SET img_url = ?
+                        WHERE username=?`;
+                       try {
+                         const result = await pool.query(sql, [
+                           data.Location,
+                           username,
+                         ]);
+                         res.json(resultUpdt);
+                       } catch (err) {
+                         res
+                           .status(200)
+                           .json({ status: false, result: "Ocurrio un error" });
+                         console.log("ERROR: " + err);
+                       }
+                      }
+                    );
+                  }
+                );
+              }
+            }
+          });
+        }
+      },
+      onFailure: function (err: any) {
+        // User authentication was not successful
+        res.json(err);
+      },
+    });
+  }
   public async loginFace(req: Request, res: Response) {
     const { username, imagen } = req.body;
 
@@ -140,7 +345,7 @@ class UserController {
         var dataimagen = {
           Name: "custom:imagen",
           Value: data.Location + "",
-        };        
+        };
         var attributeimagen = new AmazonCognitoIdentity.CognitoUserAttribute(
           dataimagen
         );
@@ -163,7 +368,7 @@ class UserController {
           .update(req.body.password)
           .digest("hex");
         console.log(attributelist);
-        let imagen_url = data.Location
+        let imagen_url = data.Location;
         cognito.signUp(
           req.body.nickname,
           hash + "D**",
@@ -183,14 +388,12 @@ class UserController {
             try {
               const result = await pool.query(sql, [
                 req.body.nickname,
-                imagen_url
+                imagen_url,
               ]);
-              res
-                .status(200)
-                .json({
-                  status: true,
-                  result: "Registrado Satisfactoriamente",
-                });
+              res.status(200).json({
+                status: true,
+                result: "Registrado Satisfactoriamente",
+              });
             } catch (err) {
               res
                 .status(200)
