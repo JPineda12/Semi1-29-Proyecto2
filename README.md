@@ -81,10 +81,30 @@ Para 'dockerizar' esta base de datos simplemente se hizo pull de una imagen ya e
 </p>
 <br>
 <br>
+<br>
 Para el alojamiento de imagenes se utilizo un bucket de AWS S3. El cual se configuracion dos carpetas distintas para guardar las fotos de perfil y las imagenes de las publicaciones hechas en la aplicacion principal (frontend)
 <p align="center"> 
   <img align="center" width="500px" src="https://user-images.githubusercontent.com/39974147/139180057-08c7a24e-cb43-47ba-a470-dfa1f87d5e4c.png" />
 </p>
+
+# Usuarios IAM
+
+## Administrador_201404405
+### Politica Asociada: AdministratorAccess
+Este usuario funciona como administador de los servicios de AWS, su politica permite crear usuarios IAM y acceso a cualquier servicio excepto facturacion.
+ 
+## rekognition_201404405
+### Politica Asociada: AmazonRekognitionFullAccess
+Este usuario tiene acceso total a los servicios de rekognition para reconocimiento de imagen mediante IA.
+ 
+## s3-201404045
+### Politica Asociada: AmazonS3FullAccess
+La politica que tiene este usuario permite acceso, creacion, modificacion de archivos en S3 mediante programacion, con su llave secreta se puede acceder desde un backend de NodeJS para postear u obtener imagenes.
+
+ ## semi1-translate
+### Politica Asociada: TranslateFullAccess
+El usuario semi1-translate tiene una politica asociada que permite el acceso total mediante programacion hacia el servicio de Amazon Translate. De esta forma se pueden hacer peticiones a dicho servicio desde un backend de NodeJS utilizando la llave secreta de este usuario.
+   
 
 
 
