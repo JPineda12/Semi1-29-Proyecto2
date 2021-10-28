@@ -21,5 +21,5 @@
 ## Arquitectura Implementada
 
 <p align="center"> 
-  <img align="center" width="440px" src="doc-images/arquitectura.svg" />
+  <img align="center" width="440px" src="doc-images/arquitectura.png" />
 </p>
