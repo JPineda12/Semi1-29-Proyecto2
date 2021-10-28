@@ -9,11 +9,17 @@
 <br>
 <br>
 <p align="center"> 
-  <img align="center" width="440px" src="Images/USAC/logo_usac.svg" />
+  <img align="center" width="440px" src="doc-images/USAC/logo_usac.svg" />
 </p>
 
 **Grupo:** 29<br>
-**Integrantes:**
 | Nombre                             | Carné     |
 |------------------------------------|-----------|
 | Juan Antonio Pineda Espino              | 201404405 |
+
+
+## Arquitectura Implementada
+
+<p align="center"> 
+  <img align="center" width="440px" src="doc-images/arquitectura.svg" />
+</p>
