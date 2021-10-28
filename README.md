@@ -18,6 +18,7 @@
 | Juan Antonio Pineda Espino              | 201404405 |
 
 
+
 ## Arquitectura Implementada
 
 <p align="center"> 
@@ -37,5 +38,9 @@ La aplicacion se construyo con una arquitectura basada en la nube (AWS), haciend
 <br>
 <br>
 <br>
-El dockerfile que permitio la construccion de la imagen que contendra el contenedor del frontend puede ser visto en [Dockerfile Frontend](u-social/Dockerfile)
+El dockerfile que permitio la construccion de la imagen que contendra el contenedor del frontend puede ser visto en
+
+[Frontend Dockerfile](u-social/Dockerfile)
+
+
 
