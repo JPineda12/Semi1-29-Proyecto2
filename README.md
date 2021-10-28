@@ -89,6 +89,10 @@ Para el alojamiento de imagenes se utilizo un bucket de AWS S3. El cual se confi
 
 # Usuarios IAM
 
+<p align="center"> 
+  <img align="center" width="500px" src="https://user-images.githubusercontent.com/39974147/139183283-cb63ea74-78e2-4f18-ad60-7e733ae9bbf1.png" />
+</p>
+
 ## Administrador_201404405
 ### Politica Asociada: AdministratorAccess
 Este usuario funciona como administador de los servicios de AWS, su politica permite crear usuarios IAM y acceso a cualquier servicio excepto facturacion.
@@ -105,7 +109,6 @@ La politica que tiene este usuario permite acceso, creacion, modificacion de arc
 ### Politica Asociada: TranslateFullAccess
 El usuario semi1-translate tiene una politica asociada que permite el acceso total mediante programacion hacia el servicio de Amazon Translate. De esta forma se pueden hacer peticiones a dicho servicio desde un backend de NodeJS utilizando la llave secreta de este usuario.
    
-
 
 
 
