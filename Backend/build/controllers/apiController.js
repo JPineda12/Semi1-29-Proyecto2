@@ -484,7 +484,7 @@ var ApiController = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        sql = "SELECT idPublicacion, url_imagen, texto, u.username as owner\n    FROM Publicacion P , Usuario U\n    WHERE P.Publicacion_idUsuario = U.idUsuario\n    ORDER BY idPublicacion DESC";
+                        sql = "SELECT idPublicacion, url_imagen, texto, U.username as owner\n    FROM Publicacion P , Usuario U\n    WHERE P.Publicacion_idUsuario = U.idUsuario\n    ORDER BY idPublicacion DESC";
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 9, , 10]);
@@ -497,7 +497,7 @@ var ApiController = /** @class */ (function () {
                         _a.label = 3;
                     case 3:
                         if (!(i < result.length)) return [3 /*break*/, 6];
-                        sqlTag = "SELECT e.etiqueta FROM Publicacion P, Etiqueta E, Post_Tags PT\n          WHERE P.idPublicacion = PT.Publicacion_idPublicacion\n          AND PT.Etiqueta_idEtiqueta = E.idEtiqueta\n          AND PT.Publicacion_idPublicacion = ?";
+                        sqlTag = "SELECT E.etiqueta FROM Publicacion P, Etiqueta E, Post_Tags PT\n          WHERE P.idPublicacion = PT.Publicacion_idPublicacion\n          AND PT.Etiqueta_idEtiqueta = E.idEtiqueta\n          AND PT.Publicacion_idPublicacion = ?";
                         return [4 /*yield*/, database_1.default.query(sqlTag, [result[i].idPublicacion])];
                     case 4:
                         resultTag = _a.sent();

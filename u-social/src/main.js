@@ -7,5 +7,5 @@ import VueAxios from 'vue-axios'
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
-axios.defaults.baseURL = 'http://localhost:3000/api'
+axios.defaults.baseURL = 'http://18.219.3.111:3000/api/'
 createApp(App).use(router).use(VueAxios, axios).use(Toast).mount('#app')

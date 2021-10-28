@@ -219,7 +219,7 @@ class ApiController {
   public async getAllExceptFriends(req: Request, res: Response) {
     const iduser = req.params.iduser;
     let sql = `SELECT u.idUsuario, u.username, u.img_url, e.estado
-    FROM Usuario u, Solicitud_Amistad s, estado_amistad e
+    FROM Usuario u, Solicitud_Amistad s, Estado_Amistad e
     WHERE s.idAmigo1 = ${iduser}
     AND s.idEstado <> 1
     AND s.idAmigo2 = u.idUsuario
@@ -295,7 +295,7 @@ class ApiController {
   }
 
   public async getAllPosts(req: Request, res: Response) {
-    let sql = `SELECT idPublicacion, url_imagen, texto, u.username as owner
+    let sql = `SELECT idPublicacion, url_imagen, texto, U.username as owner
     FROM Publicacion P , Usuario U
     WHERE P.Publicacion_idUsuario = U.idUsuario
     ORDER BY idPublicacion DESC`;
@@ -304,7 +304,7 @@ class ApiController {
       if (result.length > 0) {
         let publicaciones = [];
         for (let i = 0; i < result.length; i++) {
-          let sqlTag = `SELECT e.etiqueta FROM Publicacion P, Etiqueta E, Post_Tags PT
+          let sqlTag = `SELECT E.etiqueta FROM Publicacion P, Etiqueta E, Post_Tags PT
           WHERE P.idPublicacion = PT.Publicacion_idPublicacion
           AND PT.Etiqueta_idEtiqueta = E.idEtiqueta
           AND PT.Publicacion_idPublicacion = ?`;
