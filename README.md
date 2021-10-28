@@ -1,48 +1,46 @@
 # Semi1-29-Proyecto2
 
 - [ ] Aplicacion Web (Frontend)
-	- [ ] Login Page
+	- [x] Login Page
     	- [x] Diseño (Just Frontend)
-        - [ ] Connected with backend for Facial login (Rekognition)
-        - [ ] Implemented with Cognito for User.
-	- [ ] Register Page
+        - [x] Connected with backend for Facial login (Rekognition)
+        - [x] Implemented with Cognito for User.
+	- [x] Register Page
 		- [x] Upload Picture
         - [x] Take Picture with Webcam
-        - [ ] Connected With Backend
-	- [ ] Home Page
-		- [ ] User Info
-            - [ ] Edit Personal Information
-            - [ ] Activate Bot Mode.
-        - [ ] Users y Friends
-            - [ ] List of NO-Friends
-            - [ ] Send and Reject Requests.
-        - [ ] Posts
-            - [ ] Create new Posts.
-                - [ ] Image Required
-                - [ ] Optional Text
-                - [ ] Automatically assign Tags for the post with Rekognition (Backend)
-            - [ ] See User's and Friend's Posts. (Order Recent -> Old)
-            - [ ] Filter posts by Tag
-            - [ ] Translate Post's Text to Spanish
+        - [x] Connected With Backend
+	- [x] Home Page
+		- [x] User Info
+            - [x] Edit Personal Information
+            - [x] Activate Bot Mode.
+        - [x] Users y Friends
+            - [x] List of NO-Friends
+            - [x] Send and Reject Requests.
+        - [x] Posts
+            - [x] Create new Posts.
+                - [x] Image Required
+                - [x] Optional Text
+                - [x] Automatically assign Tags for the post with Rekognition (Backend)
+            - [x] See User's and Friend's Posts. (Order Recent -> Old)
+            - [x] Filter posts by Tag
+            - [x] Translate Post's Text to Spanish
         - [ ] Chat
             - [ ] Chat With Friends
             - [ ] Chat With Bots.
 
-- [ ] Special Requirements
-	- [ ] Docker and EC2
-        - [ ] Backend and Backend in two different Docker containers.
-        - [ ] Database in Docker.
-        - [ ] EC2 instance for Frontend and Backend (Docker).
-        - [ ] EC2 instance for Database (Docker).
-    - [ ] S3
-        - [ ] Image Uploading
-    - [ ] Cognito for user's pool.
-    - [ ] Rekognition 
-    - [ ] Api Gateway & Lambda Function
-    - [ ] Security Groups
-    
-
-- [ ] Documentacion
-	- [ ] Descripcion Arquitectura
-	- [ ] Describir usuarios IAM, permisos, y roles.
+- [x] Special Requirements
+	- [x] Docker and EC2
+        - [x] Backend and Frontend in two different Docker containers.
+        - [x] Database in Docker.
+        - [x] EC2 instance for Frontend and Backend (Docker).
+        - [x] EC2 instance for Database (Docker).
+    - [x] S3
+        - [x] Image Uploading
+    - [x] Cognito for user's pool.
+    - [x] Rekognition 
+    - [x] Api Gateway & Lambda Function
+    - [x] Security Groups
+- [x] Documentacion
+	- [x] Descripcion Arquitectura
+	- [x] Describir usuarios IAM, permisos, y roles.
 
