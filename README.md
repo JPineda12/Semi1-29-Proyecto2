@@ -1,46 +1,19 @@
 # Semi1-29-Proyecto2
 
-- [ ] Aplicacion Web (Frontend)
-	- [x] Login Page
-    	- [x] Diseño (Just Frontend)
-        - [x] Connected with backend for Facial login (Rekognition)
-        - [x] Implemented with Cognito for User.
-	- [x] Register Page
-		- [x] Upload Picture
-        - [x] Take Picture with Webcam
-        - [x] Connected With Backend
-	- [x] Home Page
-		- [x] User Info
-            - [x] Edit Personal Information
-            - [x] Activate Bot Mode.
-        - [x] Users y Friends
-            - [x] List of NO-Friends
-            - [x] Send and Reject Requests.
-        - [x] Posts
-            - [x] Create new Posts.
-                - [x] Image Required
-                - [x] Optional Text
-                - [x] Automatically assign Tags for the post with Rekognition (Backend)
-            - [x] See User's and Friend's Posts. (Order Recent -> Old)
-            - [x] Filter posts by Tag
-            - [x] Translate Post's Text to Spanish
-        - [ ] Chat
-            - [ ] Chat With Friends
-            - [ ] Chat With Bots.
+**UNIVERSIDAD DE SAN CARLOS DE GUATEMALA**<br>
+**FACULTAD DE INGENIERÍA**<br>
+**ESCUELA DE INGENIERÍA EN CIENCIAS Y SISTEMAS**<br>
+**REDES DE COMPUTADORAS**<br>
+**SECCIÓN O**<br>
 
-- [x] Special Requirements
-	- [x] Docker and EC2
-        - [x] Backend and Frontend in two different Docker containers.
-        - [x] Database in Docker.
-        - [x] EC2 instance for Frontend and Backend (Docker).
-        - [x] EC2 instance for Database (Docker).
-    - [x] S3
-        - [x] Image Uploading
-    - [x] Cognito for user's pool.
-    - [x] Rekognition 
-    - [x] Api Gateway & Lambda Function
-    - [x] Security Groups
-- [x] Documentacion
-	- [x] Descripcion Arquitectura
-	- [x] Describir usuarios IAM, permisos, y roles.
+<br>
+<br>
+<p align="center"> 
+  <img align="center" width="440px" src="Images/USAC/logo_usac.svg" />
+</p>
 
+**Grupo:** 29<br>
+**Integrantes:**
+| Nombre                             | Carné     |
+|------------------------------------|-----------|
+| Juan Antonio Pineda Espino              | 201404405 |
