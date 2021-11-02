@@ -1,12 +1,6 @@
 version: "3"
 
 services: 
-  frontend: 
-      container_name: frontend
-      build: ./u-social
-      ports: 
-          - '443:8080'
-    
   backend: 
     container_name: backend
     build: ./Backend

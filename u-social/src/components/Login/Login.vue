@@ -257,34 +257,35 @@ export default {
         imagen: compatible_base64,
       };
       this.axios.post("/login-face", user).then((response) => {
-        console.log(response);
         this.LoginValues.password = "";
+        console.log("AVER: ", response);
         if (response.data.Comparacion.length > 0) {
           if (response.data.Comparacion[0].Similarity >= 80) {
-            this.axios
-              .get(`/user/${this.LoginValues.username_cam}`)
-              .then((res) => {
-                localStorage.setItem("user-info", JSON.stringify(res.data[0]));
-                this.$router.push({ name: "Home" });
-                this.LoginValues.password = "";
-                this.LoginValues.username = "";
-                this.LoginValues.username_cam = "";
-              });
+            let usuario = {
+              idUsuario: response.data.usuario[0].idUsuario,
+              username: response.data.usuario[0].username,
+              img_url: response.data.usuario[0].img_url,
+              name: response.data.usuario[0].nombre,
+              botmode: response.data.usuario[0].botmode,
+              email: response.data.usuario[0].email,
+            };
+            localStorage.setItem("user-info", JSON.stringify(usuario));
+            this.$router.push({ name: "Home" });
+            this.LoginValues.password = "";
+            this.LoginValues.username = "";
+            this.LoginValues.username_cam = "";
           }
         } else {
           Swal.fire({
             title: "No se reconocio el rostro con el usuario: " + user.username,
             icon: "error",
             confirmButtonColor: "#3085d6",
-          }).then((result) => {
-            console.log(result);
           });
         }
       });
     },
     LoginCreds() {
       this.axios.post("/login", this.LoginValues).then((response) => {
-        console.log(response.data);
         if (response.data.code === "UserNotConfirmedException") {
           this.txtError = "Usuario sin CONFIRMAR";
           this.LoginValues.password = "";
@@ -301,9 +302,9 @@ export default {
               username: res.data[0].username,
               img_url: res.data[0].img_url,
               name: response.data.idToken.payload.name,
-              botmode: response.data.idToken.payload['custom:botmode'],
-              email: response.data.idToken.payload.email
-            }
+              botmode: response.data.idToken.payload["custom:botmode"],
+              email: response.data.idToken.payload.email,
+            };
             localStorage.setItem("user-info", JSON.stringify(usuario));
             this.$router.push({ name: "Home" });
             this.LoginValues.password = "";
@@ -316,35 +317,6 @@ export default {
     goRegister(event) {
       event.preventDefault();
       this.$router.push({ name: "Register" });
-    },
-    mensajeOk() {
-      Swal.fire({
-        title: "Usuario registrado satisfactoriamente",
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-      }).then((result) => {
-        console.log(result);
-        this.$router.push({ name: "login" });
-      });
-    },
-    handlePhoto(event) {
-      Swal.fire({
-        title: "Subir Foto",
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-      }).then((result) => {
-        console.log(result);
-        const file = event.target.files[0];
-        this.imagen = URL.createObjectURL(file);
-        this.createBase64Image(file);
-      });
-    },
-    createBase64Image(fileObject) {
-      var reader = new FileReader();
-      reader.onload = (e) => {
-        this.imagenBase64 = e.target.result;
-      };
-      reader.readAsDataURL(fileObject);
     },
   },
 };

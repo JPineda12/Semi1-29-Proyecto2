@@ -5,7 +5,7 @@
       <div class="menu">
         <a href="#" class="back" @click="close()"
           ><i class="fa fa-angle-left"></i>
-          <img src="https://i.imgur.com/G4EjwqQ.jpg" draggable="false"
+          <img :src="getFriendImage" draggable="false"
         /></a>
         <div class="name">{{ this.getChatFriend.nombre }}</div>
       </div>
@@ -59,6 +59,8 @@
 </template>
 
 <script>
+import { io } from "socket.io-client";
+const socket = io("https://3.144.211.199:443");
 export default {
   name: "ChatWindow",
   emits: ["close"],
@@ -68,6 +70,23 @@ export default {
   mounted() {
     this.scrollToEnd();
   },
+  unmounted() {
+    socket.disconnect();
+  },
+  created() {
+    socket.on("chat-message", (data) => {
+      let msg = {
+        message: {
+          idChat: data.idChat,
+          idUsuario: data.idUsuario,
+          texto: data.texto,
+        },
+        class: "other",
+      };
+      this.messages.push(msg);
+      this.scrollToEnd();
+    });
+  },
   props: {
     chatFriend: Object,
     user: Object,
@@ -75,6 +94,9 @@ export default {
   computed: {
     getChatFriend() {
       return this.chatFriend;
+    },
+    getFriendImage() {
+      return this.chatFriend.imagen_url;
     },
     getUser() {
       return this.user;
@@ -84,6 +106,8 @@ export default {
     return {
       messages: [],
       newMessage: "",
+      mySocket: null,
+      idChat: -1,
     };
   },
   methods: {
@@ -94,15 +118,16 @@ export default {
       event.preventDefault();
       let msg = {
         message: {
-          idMsg: 200,
-          idEmisor: 1,
-          idReceptor: 3,
+          idChat: this.idChat,
+          idUsuario: this.user.idUsuario,
           texto: this.newMessage,
-          fecha: "21-1212-16:04",
         },
         class: "self",
       };
       await this.insertNew(msg, this.messages);
+      this.newMessage = "";
+      socket.emit("chat-message", msg.message);
+
       this.scrollToEnd();
     },
     insertNew: async (msg, messages) => {
@@ -110,48 +135,44 @@ export default {
       return;
     },
     getMessages() {
-      let msjFriend = {
-        idMsg: 2,
-        idEmisor: 3,
-        idReceptor: 1,
-        texto: "Hola, Mensaje del chat de Prueba bro",
-        fecha: "21-12-12 10:04",
+      let roomBody = {
+        idUsuario1: this.user.idUsuario,
+        idUsuario2: this.chatFriend.idUsuario,
       };
-      let msjSelf = {
-        idMsg: 1,
-        idEmisor: 1,
-        idReceptor: 3,
-        texto: "Hola, Self Message test my nigga.",
-        fecha: "21-12-12 16:04",
-      };
-
-      this.pushToArray(msjFriend);
-      this.pushToArray(msjSelf);
-      this.pushToArray(msjSelf);
-      this.pushToArray(msjSelf);
-      this.pushToArray(msjSelf);
-      this.pushToArray(msjFriend);
-      this.pushToArray(msjFriend);
-      this.pushToArray(msjFriend);
-      this.pushToArray(msjFriend);
-      this.pushToArray(msjSelf);
-      this.pushToArray(msjFriend);
-      this.pushToArray(msjSelf);
+      this.axios.post("/room", roomBody).then((response) => {
+        if (response.data.created) {
+          this.idChat = response.data.idChat;
+        } else {
+          this.idChat = response.data.idChat;
+          for (let i = 0; i < response.data.messages.length; i++) {
+            this.pushToArray(response.data.messages[i])
+          }
+        }
+      });
     },
-    pushToArray(message) {
-      if (message.idEmisor === this.chatFriend.idUsuario) {
-        let msg = {
-          message: message,
+
+    pushToArray(dbMsg) {
+      let msg = {};
+      if (dbMsg.Usuario_idUsuario === this.chatFriend.idUsuario) {
+        msg = {
+          message: {
+            idChat: dbMsg.idChat,
+            idUsuario: dbMsg.Usuario_idUsuario,
+            texto: dbMsg.texto,
+          },
           class: "other",
         };
-        this.messages.push(msg);
-      } else if (message.idEmisor === this.user.idUsuario) {
-        let msg = {
-          message: message,
+      } else if (dbMsg.Usuario_idUsuario === this.user.idUsuario) {
+        msg = {
+          message: {
+            idChat: dbMsg.idChat,
+            idUsuario: dbMsg.Usuario_idUsuario,
+            texto: dbMsg.texto,
+          },
           class: "self",
         };
-        this.messages.push(msg);
       }
+      this.messages.push(msg);
     },
     scrollToEnd() {
       var container = this.$el.querySelector(".modal");

@@ -48,7 +48,7 @@ export default {
       return this.Post.date;
     },
     getImage: function () {
-      return "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg"; //this.Post.image; //
+      return this.Post.image; //
     },
   },
   methods: {

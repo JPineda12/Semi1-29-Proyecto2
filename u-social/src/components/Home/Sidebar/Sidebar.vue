@@ -2,11 +2,11 @@
   <div class="sidebar" :style="{ width: sidebarWidth }">
     <h1>
       <span v-if="collapsed" class="titulo">
-        <img :src="logo" />
+        <img :src="User.img_url" />
       </span>
       <span v-else>
         <div class="profile">
-          <img :src="logo" />
+          <img :src="User.img_url" />
           
           <SidebarLink
             :to="compActivo"

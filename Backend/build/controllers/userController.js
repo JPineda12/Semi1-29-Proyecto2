@@ -56,9 +56,6 @@ var UserController = /** @class */ (function () {
             var crypto, hash, authenticationData, authenticationDetails, userData, cognitoUser;
             return __generator(this, function (_a) {
                 crypto = require("crypto");
-                console.log(req.body);
-                console.log("req.body.username; ", req.body.username);
-                console.log("password: ", req.body.password);
                 hash = crypto
                     .createHash("sha256")
                     .update(req.body.password)
@@ -132,21 +129,45 @@ var UserController = /** @class */ (function () {
                         var attributeemail = new AmazonCognitoIdentity.CognitoUserAttribute(dataemail);
                         attributelist.push(attributeemail);
                         if (imgbase64 === "") {
-                            console.log("NO IMAGE");
                             if (newpassword === "") {
-                                console.log("NO NEW PASSWORD");
                                 //JUST UPDATE
                                 cognitoUser.updateAttributes(attributelist, function (err, resultUpdt) {
-                                    if (err) {
-                                        res.json(err);
-                                    }
-                                    console.log("call result update attributes: " + resultUpdt);
-                                    res.json(resultUpdt);
+                                    return __awaiter(this, void 0, void 0, function () {
+                                        var sql, SQLresult, err_1;
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    if (err) {
+                                                        res.json(err);
+                                                    }
+                                                    sql = "UPDATE Usuario SET nombre = ?, botmode = ?\n                WHERE username=?";
+                                                    _a.label = 1;
+                                                case 1:
+                                                    _a.trys.push([1, 3, , 4]);
+                                                    return [4 /*yield*/, database_1.default.query(sql, [
+                                                            name,
+                                                            botmode,
+                                                            username,
+                                                        ])];
+                                                case 2:
+                                                    SQLresult = _a.sent();
+                                                    res.json(resultUpdt);
+                                                    return [3 /*break*/, 4];
+                                                case 3:
+                                                    err_1 = _a.sent();
+                                                    res
+                                                        .status(200)
+                                                        .json({ status: false, result: "Ocurrio un error" });
+                                                    console.log("ERROR: " + err_1);
+                                                    return [3 /*break*/, 4];
+                                                case 4: return [2 /*return*/];
+                                            }
+                                        });
+                                    });
                                 });
                             }
                             else {
                                 //UPDATE AND CHANGE PASSWORD
-                                console.log("NEW PASSWORD");
                                 var crypto = require("crypto");
                                 var hashNew = crypto
                                     .createHash("sha256")
@@ -157,13 +178,39 @@ var UserController = /** @class */ (function () {
                                         console.log("err: ", err);
                                         res.json(err);
                                     }
-                                    console.log("call result change password: " + resultChange);
                                     cognitoUser.updateAttributes(attributelist, function (err, resultUpdt) {
-                                        if (err) {
-                                            res.json(err);
-                                        }
-                                        console.log("call result: " + resultUpdt);
-                                        res.json(resultUpdt);
+                                        return __awaiter(this, void 0, void 0, function () {
+                                            var sql, SQLresult, err_2;
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        if (err) {
+                                                            res.json(err);
+                                                        }
+                                                        sql = "UPDATE Usuario SET nombre = ?, botmode = ?\n                    WHERE username=?";
+                                                        _a.label = 1;
+                                                    case 1:
+                                                        _a.trys.push([1, 3, , 4]);
+                                                        return [4 /*yield*/, database_1.default.query(sql, [
+                                                                name,
+                                                                botmode,
+                                                                username,
+                                                            ])];
+                                                    case 2:
+                                                        SQLresult = _a.sent();
+                                                        res.json(resultUpdt);
+                                                        return [3 /*break*/, 4];
+                                                    case 3:
+                                                        err_2 = _a.sent();
+                                                        res
+                                                            .status(200)
+                                                            .json({ status: false, result: "Ocurrio un error" });
+                                                        console.log("ERROR: " + err_2);
+                                                        return [3 /*break*/, 4];
+                                                    case 4: return [2 /*return*/];
+                                                }
+                                            });
+                                        });
                                     });
                                 });
                             }
@@ -171,7 +218,6 @@ var UserController = /** @class */ (function () {
                         else {
                             //POST TO S3 AND UPDATE
                             //PLACE img to S3 profile pictures bucket
-                            console.log("NEW IMAGE, PLACE S3");
                             var nombrei = "profile-pictures/" +
                                 req.body.nickname +
                                 "-pp" +
@@ -198,36 +244,36 @@ var UserController = /** @class */ (function () {
                                     var attributeimagen = new AmazonCognitoIdentity.CognitoUserAttribute(dataimagen);
                                     attributelist.push(attributeimagen);
                                     if (newpassword === "") {
-                                        console.log("NO NEW PASSOWRD");
                                         //JUST UPDATE
                                         cognitoUser.updateAttributes(attributelist, function (err, resultUpdt) {
                                             return __awaiter(this, void 0, void 0, function () {
-                                                var sql, result_1, err_1;
+                                                var sql, SQLresult, err_3;
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0:
                                                             if (err) {
                                                                 res.json(err);
                                                             }
-                                                            console.log("call result update attributes: " + resultUpdt);
-                                                            sql = "UPDATE Usuario SET img_url = ?\n                     WHERE username=?";
+                                                            sql = "UPDATE Usuario SET img_url = ?, nombre = ?, botmode = ?\n                    WHERE username=?";
                                                             _a.label = 1;
                                                         case 1:
                                                             _a.trys.push([1, 3, , 4]);
                                                             return [4 /*yield*/, database_1.default.query(sql, [
                                                                     data.Location,
+                                                                    name,
+                                                                    botmode,
                                                                     username,
                                                                 ])];
                                                         case 2:
-                                                            result_1 = _a.sent();
+                                                            SQLresult = _a.sent();
                                                             res.json(resultUpdt);
                                                             return [3 /*break*/, 4];
                                                         case 3:
-                                                            err_1 = _a.sent();
+                                                            err_3 = _a.sent();
                                                             res
                                                                 .status(200)
                                                                 .json({ status: false, result: "Ocurrio un error" });
-                                                            console.log("ERROR: " + err_1);
+                                                            console.log("ERROR: " + err_3);
                                                             return [3 /*break*/, 4];
                                                         case 4: return [2 /*return*/];
                                                     }
@@ -246,35 +292,35 @@ var UserController = /** @class */ (function () {
                                             if (err) {
                                                 res.json(err);
                                             }
-                                            console.log("call result change password: " + resultChange);
                                             cognitoUser.updateAttributes(attributelist, function (err, resultUpdt) {
                                                 return __awaiter(this, void 0, void 0, function () {
-                                                    var sql, result_2, err_2;
+                                                    var sql, SQLresult, err_4;
                                                     return __generator(this, function (_a) {
                                                         switch (_a.label) {
                                                             case 0:
                                                                 if (err) {
                                                                     res.json(err);
                                                                 }
-                                                                console.log("call result: " + resultUpdt);
-                                                                sql = "UPDATE Usuario SET img_url = ?\n                        WHERE username=?";
+                                                                sql = "UPDATE Usuario SET img_url = ?, nombre = ?, botmode = ?\n                        WHERE username=?";
                                                                 _a.label = 1;
                                                             case 1:
                                                                 _a.trys.push([1, 3, , 4]);
                                                                 return [4 /*yield*/, database_1.default.query(sql, [
                                                                         data.Location,
+                                                                        name,
+                                                                        botmode,
                                                                         username,
                                                                     ])];
                                                             case 2:
-                                                                result_2 = _a.sent();
+                                                                SQLresult = _a.sent();
                                                                 res.json(resultUpdt);
                                                                 return [3 /*break*/, 4];
                                                             case 3:
-                                                                err_2 = _a.sent();
+                                                                err_4 = _a.sent();
                                                                 res
                                                                     .status(200)
                                                                     .json({ status: false, result: "Ocurrio un error" });
-                                                                console.log("ERROR: " + err_2);
+                                                                console.log("ERROR: " + err_4);
                                                                 return [3 /*break*/, 4];
                                                             case 4: return [2 /*return*/];
                                                         }
@@ -298,22 +344,22 @@ var UserController = /** @class */ (function () {
     };
     UserController.prototype.loginFace = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, username, imagen, sql, result, imageToBase64, err_3;
+            var _a, username, imagen, sql, result_1, imageToBase64, err_5;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _a = req.body, username = _a.username, imagen = _a.imagen;
-                        sql = "SELECT username, img_url FROM Usuario WHERE username=?";
+                        sql = "SELECT idUsuario, username, img_url, email, nombre, botmode FROM Usuario WHERE username=?";
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, database_1.default.query(sql, [username])];
                     case 2:
-                        result = _b.sent();
-                        if (result.length > 0) {
+                        result_1 = _b.sent();
+                        if (result_1.length > 0) {
                             imageToBase64 = require("image-to-base64");
-                            console.log(result[0].img_url);
-                            imageToBase64(result[0].img_url) // Image URL
+                            console.log(result_1[0].img_url);
+                            imageToBase64(result_1[0].img_url) // Image URL
                                 .then(function (response) {
                                 var imagenBD = response;
                                 //COMPARE FACES WITH REK
@@ -332,7 +378,7 @@ var UserController = /** @class */ (function () {
                                         console.log("------------- ERROR ------------ ");
                                     }
                                     else {
-                                        res.json({ Comparacion: data.FaceMatches });
+                                        res.json({ Comparacion: data.FaceMatches, usuario: result_1 });
                                     }
                                 });
                             })
@@ -346,9 +392,9 @@ var UserController = /** @class */ (function () {
                         }
                         return [3 /*break*/, 4];
                     case 3:
-                        err_3 = _b.sent();
+                        err_5 = _b.sent();
                         res.json([]);
-                        console.log("ERROR: " + err_3);
+                        console.log("ERROR: " + err_5);
                         console.log("------------- ERROR ------------ ");
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
@@ -415,7 +461,7 @@ var UserController = /** @class */ (function () {
                         console.log(attributelist);
                         var imagen_url_1 = data.Location;
                         cognito.signUp(req.body.nickname, hash + "D**", attributelist, null, function (err, data) { return __awaiter(_this, void 0, void 0, function () {
-                            var sql, result, err_4;
+                            var sql, result, err_6;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
@@ -424,13 +470,16 @@ var UserController = /** @class */ (function () {
                                             res.json(err.message || err);
                                             return [2 /*return*/];
                                         }
-                                        sql = "INSERT INTO Usuario(username,img_url)\n          VALUES(?, ?)";
+                                        sql = "INSERT INTO Usuario(username,img_url, email, nombre, botmode)\n          VALUES(?, ?, ?, ?, ?)";
                                         _a.label = 1;
                                     case 1:
                                         _a.trys.push([1, 3, , 4]);
                                         return [4 /*yield*/, database_1.default.query(sql, [
                                                 req.body.nickname,
                                                 imagen_url_1,
+                                                req.body.email,
+                                                req.body.name,
+                                                req.body.bot
                                             ])];
                                     case 2:
                                         result = _a.sent();
@@ -440,11 +489,11 @@ var UserController = /** @class */ (function () {
                                         });
                                         return [3 /*break*/, 4];
                                     case 3:
-                                        err_4 = _a.sent();
+                                        err_6 = _a.sent();
                                         res
                                             .status(200)
                                             .json({ status: false, result: "Ocurrio un error" });
-                                        console.log("ERROR: " + err_4);
+                                        console.log("ERROR: " + err_6);
                                         return [3 /*break*/, 4];
                                     case 4: return [2 /*return*/];
                                 }

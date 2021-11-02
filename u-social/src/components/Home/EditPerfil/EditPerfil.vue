@@ -74,7 +74,6 @@ export default {
     User: { type: Object, required: true },
   },
   beforeMount() {
-    console.log(this.User);
     if (this.User.botmode === "1") {
       this.botmode = true;
     }
@@ -116,7 +115,6 @@ export default {
         confirmButtonText: "Si, editar!",
       }).then((result) => {
         if (result.isConfirmed) {
-          console.log(result);
           let bot = 0;
           if (this.botmode) {
             bot = 1;
@@ -130,7 +128,6 @@ export default {
             botmode: bot,
             imgbase64: this.base64,
           };
-          console.log(editBody);
           this.axios.put("/edit-profile", editBody).then((response) => {
             if (response.data.code === "UserNotConfirmedException") {
               Swal.fire("Error!", "Usuario sin confirmar", "error");
@@ -140,9 +137,18 @@ export default {
             ) {
               Swal.fire("Error!", "Contraseña Incorrecta", "error");
             } else {
-              console.log("averr: ", response.data);
               if (response.data.toLowerCase() === "success") {
                 Swal.fire("Updated!", "Perfil actualizado", "success");
+                let usuario = {
+                  idUsuario: this.User.idUsuario,
+                  username: this.User.username,
+                  img_url: this.User.img_url,
+                  name: editBody.name,
+                  botmode: editBody.botmode,
+                  email: editBody.email,
+                };
+                localStorage.clear();
+                localStorage.setItem("user-info", JSON.stringify(usuario));
               }
             }
           });

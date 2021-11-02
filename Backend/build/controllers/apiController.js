@@ -65,7 +65,6 @@ var ApiController = /** @class */ (function () {
                         res.send({ error: err });
                     }
                     else {
-                        console.log(data);
                         res.send({ message: data });
                     }
                 });
@@ -191,7 +190,6 @@ var ApiController = /** @class */ (function () {
                         return [4 /*yield*/, database_1.default.query(sql2, [idAmigo2, idAmigo1])];
                     case 4:
                         result2 = _b.sent();
-                        console.log("RESULT2: ", result2);
                         if (!(result2.changedRows > 0)) return [3 /*break*/, 5];
                         res.status(200).json({
                             status: true,
@@ -206,7 +204,6 @@ var ApiController = /** @class */ (function () {
                         return [4 /*yield*/, database_1.default.query(sql3, [idAmigo2, idAmigo1])];
                     case 7:
                         result3 = _b.sent();
-                        console.log("RESULT 3: ", result3);
                         res.status(200).json({
                             status: true,
                             result: "Solicitud Aceptada Correctamente",
@@ -257,7 +254,6 @@ var ApiController = /** @class */ (function () {
                         return [4 /*yield*/, database_1.default.query(sql, [idAmigo1, idAmigo2])];
                     case 2:
                         result = _b.sent();
-                        console.log("RESULT1: ", result);
                         sql2 = "INSERT INTO Solicitud_Amistad(idAmigo1, idAmigo2, idEstado)\n      VALUES(?,?,2)";
                         _b.label = 3;
                     case 3:
@@ -265,7 +261,6 @@ var ApiController = /** @class */ (function () {
                         return [4 /*yield*/, database_1.default.query(sql2, [idAmigo2, idAmigo1])];
                     case 4:
                         result2 = _b.sent();
-                        console.log("RESULT2: " + result2);
                         res.status(200).json({
                             status: true,
                             result: "Solicitud Rechazada Correctamente",
@@ -361,7 +356,7 @@ var ApiController = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         iduser = req.params.iduser;
-                        sql = "SELECT u.idUsuario, u.username, u.img_url, e.estado\n    FROM Usuario u, Solicitud_Amistad s, estado_amistad e\n    WHERE s.idAmigo1 = " + iduser + "\n    AND s.idEstado <> 1\n    AND s.idAmigo2 = u.idUsuario\n    AND e.idEstadoAmistad = s.idEstado\n    UNION\n    SELECT u.idUsuario, u.username, u.img_url, 'NO-FRIENDS'\n    FROM Usuario u\n    WHERE u.idUsuario <> " + iduser + "\n    AND u.idUsuario NOT IN (SELECT s2.idAmigo1\n                            FROM Solicitud_Amistad s2\n                            WHERE s2.idAmigo2 =" + iduser + ");";
+                        sql = "SELECT u.idUsuario, u.username, u.img_url, e.estado\n    FROM Usuario u, Solicitud_Amistad s, Estado_Amistad e\n    WHERE s.idAmigo1 = " + iduser + "\n    AND s.idEstado <> 1\n    AND s.idAmigo2 = u.idUsuario\n    AND e.idEstadoAmistad = s.idEstado\n    UNION\n    SELECT u.idUsuario, u.username, u.img_url, 'NO-FRIENDS'\n    FROM Usuario u\n    WHERE u.idUsuario <> " + iduser + "\n    AND u.idUsuario NOT IN (SELECT s2.idAmigo1\n                            FROM Solicitud_Amistad s2\n                            WHERE s2.idAmigo2 =" + iduser + ");";
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
@@ -550,7 +545,6 @@ var ApiController = /** @class */ (function () {
                                     res.status(500).send(err);
                                     return [3 /*break*/, 5];
                                 case 1:
-                                    console.log(data.Location);
                                     sql = "INSERT INTO Publicacion(url_imagen, texto, Publicacion_idUsuario)\n        VALUES(?, ?, ?)";
                                     _a.label = 2;
                                 case 2:
@@ -558,7 +552,6 @@ var ApiController = /** @class */ (function () {
                                     return [4 /*yield*/, database_1.default.query(sql, [data.Location, texto, idUser])];
                                 case 3:
                                     result = _a.sent();
-                                    console.log(result);
                                     res.status(200).json({
                                         status: true,
                                         result: "Publicado Correctamente",
@@ -593,7 +586,6 @@ var ApiController = /** @class */ (function () {
                         return [4 /*yield*/, database_1.default.query(sql, [tag])];
                     case 2:
                         result = _a.sent();
-                        console.log("TAGID: ", result.insertId);
                         res.status(200).json({
                             status: true,
                             result: "Etiqueta ingresada Correctamente",

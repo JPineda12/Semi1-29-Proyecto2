@@ -19,7 +19,6 @@ class ApiController {
         console.log(err, err.stack);
         res.send({ error: err })
       } else {
-        console.log(data);
         res.send({ message: data })
       }
     });
@@ -108,7 +107,6 @@ class ApiController {
       try {
         //Send idAmigo2 first and then idAmigo1 :)
         const result2 = await pool.query(sql2, [idAmigo2, idAmigo1]);
-        console.log("RESULT2: ", result2);
         if (result2.changedRows > 0) {
           res.status(200).json({
             status: true,
@@ -119,7 +117,6 @@ class ApiController {
           VALUES(?,?,1)`;
           try {
             const result3 = await pool.query(sql3, [idAmigo2, idAmigo1]);
-            console.log("RESULT 3: ", result3);
             res.status(200).json({
               status: true,
               result: "Solicitud Aceptada Correctamente",
@@ -156,13 +153,11 @@ class ApiController {
     AND idAmigo2 = ?`;
     try {
       const result = await pool.query(sql, [idAmigo1, idAmigo2]);
-      console.log("RESULT1: ", result);
       let sql2 = `INSERT INTO Solicitud_Amistad(idAmigo1, idAmigo2, idEstado)
       VALUES(?,?,2)`;
       try {
         //Send idAmigo2 first and then idAmigo1 :)
         const result2 = await pool.query(sql2, [idAmigo2, idAmigo1]);
-        console.log("RESULT2: " + result2);
         res.status(200).json({
           status: true,
           result: "Solicitud Rechazada Correctamente",
@@ -340,12 +335,10 @@ class ApiController {
       if (err) {
         res.status(500).send(err);
       } else {
-        console.log(data.Location);
         let sql = `INSERT INTO Publicacion(url_imagen, texto, Publicacion_idUsuario)
         VALUES(?, ?, ?)`;
         try {
           const result = await pool.query(sql, [data.Location, texto, idUser]);
-          console.log(result);
           res.status(200).json({
             status: true,
             result: "Publicado Correctamente",
@@ -364,7 +357,6 @@ class ApiController {
     VALUES(?)`;
     try {
       const result = await pool.query(sql, [tag]);
-      console.log("TAGID: ", result.insertId);
       res.status(200).json({
         status: true,
         result: "Etiqueta ingresada Correctamente",

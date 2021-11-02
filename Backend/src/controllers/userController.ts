@@ -10,9 +10,6 @@ const cognito = new AmazonCognitoIdentity.CognitoUserPool(aws_keys.cognito);
 class UserController {
   public async loginCognito(req: Request, res: Response) {
     var crypto = require("crypto");
-    console.log(req.body);
-    console.log("req.body.username; ", req.body.username);
-    console.log("password: ", req.body.password);
     var hash = crypto
       .createHash("sha256")
       .update(req.body.password)
@@ -96,23 +93,33 @@ class UserController {
         );
         attributelist.push(attributeemail);
         if (imgbase64 === "") {
-          console.log("NO IMAGE");
           if (newpassword === "") {
-            console.log("NO NEW PASSWORD");
             //JUST UPDATE
             cognitoUser.updateAttributes(
               attributelist,
-              function (err: any, resultUpdt: any) {
+              async function (err: any, resultUpdt: any) {
                 if (err) {
                   res.json(err);
                 }
-                console.log("call result update attributes: " + resultUpdt);
-                res.json(resultUpdt);
+                let sql = `UPDATE Usuario SET nombre = ?, botmode = ?
+                WHERE username=?`;
+                try {
+                  const SQLresult = await pool.query(sql, [
+                    name,
+                    botmode,
+                    username,
+                  ]);
+                  res.json(resultUpdt);
+                } catch (err) {
+                  res
+                    .status(200)
+                    .json({ status: false, result: "Ocurrio un error" });
+                  console.log("ERROR: " + err);
+                }
               }
             );
           } else {
             //UPDATE AND CHANGE PASSWORD
-            console.log("NEW PASSWORD");
             var crypto = require("crypto");
             var hashNew = crypto
               .createHash("sha256")
@@ -126,15 +133,27 @@ class UserController {
                   console.log("err: ", err);
                   res.json(err);
                 }
-                console.log("call result change password: " + resultChange);
                 cognitoUser.updateAttributes(
                   attributelist,
-                  function (err: any, resultUpdt: any) {
+                  async function (err: any, resultUpdt: any) {
                     if (err) {
                       res.json(err);
                     }
-                    console.log("call result: " + resultUpdt);
-                    res.json(resultUpdt);
+                    let sql = `UPDATE Usuario SET nombre = ?, botmode = ?
+                    WHERE username=?`;
+                    try {
+                      const SQLresult = await pool.query(sql, [
+                        name,
+                        botmode,
+                        username,
+                      ]);
+                      res.json(resultUpdt);
+                    } catch (err) {
+                      res
+                        .status(200)
+                        .json({ status: false, result: "Ocurrio un error" });
+                      console.log("ERROR: " + err);
+                    }
                   }
                 );
               }
@@ -143,7 +162,6 @@ class UserController {
         } else {
           //POST TO S3 AND UPDATE
           //PLACE img to S3 profile pictures bucket
-          console.log("NEW IMAGE, PLACE S3");
           let nombrei =
             "profile-pictures/" +
             req.body.nickname +
@@ -172,7 +190,6 @@ class UserController {
               attributelist.push(attributeimagen);
 
               if (newpassword === "") {
-                console.log("NO NEW PASSOWRD");
                 //JUST UPDATE
                 cognitoUser.updateAttributes(
                   attributelist,
@@ -180,12 +197,13 @@ class UserController {
                     if (err) {
                       res.json(err);
                     }
-                    console.log("call result update attributes: " + resultUpdt);
-                    let sql = `UPDATE Usuario SET img_url = ?
-                     WHERE username=?`;
+                    let sql = `UPDATE Usuario SET img_url = ?, nombre = ?, botmode = ?
+                    WHERE username=?`;
                     try {
-                      const result = await pool.query(sql, [
+                      const SQLresult = await pool.query(sql, [
                         data.Location,
+                        name,
+                        botmode,
                         username,
                       ]);
                       res.json(resultUpdt);
@@ -211,28 +229,28 @@ class UserController {
                     if (err) {
                       res.json(err);
                     }
-                    console.log("call result change password: " + resultChange);
                     cognitoUser.updateAttributes(
                       attributelist,
-                     async function (err: any, resultUpdt: any) {
+                      async function (err: any, resultUpdt: any) {
                         if (err) {
                           res.json(err);
                         }
-                        console.log("call result: " + resultUpdt);
-                        let sql = `UPDATE Usuario SET img_url = ?
+                        let sql = `UPDATE Usuario SET img_url = ?, nombre = ?, botmode = ?
                         WHERE username=?`;
-                       try {
-                         const result = await pool.query(sql, [
-                           data.Location,
-                           username,
-                         ]);
-                         res.json(resultUpdt);
-                       } catch (err) {
-                         res
-                           .status(200)
-                           .json({ status: false, result: "Ocurrio un error" });
-                         console.log("ERROR: " + err);
-                       }
+                        try {
+                          const SQLresult = await pool.query(sql, [
+                            data.Location,
+                            name,
+                            botmode,
+                            username,
+                          ]);
+                          res.json(resultUpdt);
+                        } catch (err) {
+                          res
+                            .status(200)
+                            .json({ status: false, result: "Ocurrio un error" });
+                          console.log("ERROR: " + err);
+                        }
                       }
                     );
                   }
@@ -251,7 +269,7 @@ class UserController {
   public async loginFace(req: Request, res: Response) {
     const { username, imagen } = req.body;
 
-    let sql = `SELECT username, img_url FROM Usuario WHERE username=?`;
+    let sql = `SELECT idUsuario, username, img_url, email, nombre, botmode FROM Usuario WHERE username=?`;
     try {
       const result = await pool.query(sql, [username]);
       if (result.length > 0) {
@@ -276,7 +294,7 @@ class UserController {
                 res.json({ mensaje: err });
                 console.log("------------- ERROR ------------ ");
               } else {
-                res.json({ Comparacion: data.FaceMatches });
+                res.json({ Comparacion: data.FaceMatches, usuario: result });
               }
             });
           })
@@ -382,13 +400,16 @@ class UserController {
               return;
             }
             //INgresar usuario a la base de datos.
-            let sql = `INSERT INTO Usuario(username,img_url)
-          VALUES(?, ?)`;
+            let sql = `INSERT INTO Usuario(username,img_url, email, nombre, botmode)
+          VALUES(?, ?, ?, ?, ?)`;
 
             try {
               const result = await pool.query(sql, [
                 req.body.nickname,
                 imagen_url,
+                req.body.email, 
+                req.body.name,
+                req.body.bot
               ]);
               res.status(200).json({
                 status: true,

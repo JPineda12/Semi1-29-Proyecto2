@@ -117,8 +117,7 @@ export default {
               idUsuario: response.data[i].idUsuario,
               nombre: response.data[i].username,
               //response.data[i].img_url,
-              imagen_url:
-                "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
+              imagen_url:response.data[i].img_url,
             };
             this.Requests.push(us);
           }
@@ -145,7 +144,7 @@ export default {
                 isSent: false,
                 //response.data[i].img_url,
                 imagen_url:
-                  "https://www.naruto-guides.com/wp-content/uploads/2019/05/sakura-haruno.jpg",
+                  response.data[i].img_url,
               };
               if (response.data[i].estado.toUpperCase() === "PENDIENTE") {
                 us.buttonText = "Request Sent";
