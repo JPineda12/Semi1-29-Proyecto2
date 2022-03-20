@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 
 class ApiController {
   public async translatePost(req: Request, res: Response) {
-    const translate = new AWS.Translate(aws_keys.translate);
+    /*const translate = new AWS.Translate(aws_keys.translate);
     const postText = req.body.text;
     let params = {
       SourceLanguageCode: "auto",
@@ -21,7 +21,8 @@ class ApiController {
       } else {
         res.send({ message: data })
       }
-    });
+    });*/
+    res.send({ message: "Translate" });
   }
 
   public async sendRequest(req: Request, res: Response) {
@@ -258,15 +259,16 @@ class ApiController {
     }
   }
   public async getUserByName(req: Request, res: Response) {
-    const username = req.params.username;
-    let sql = `SELECT idUsuario, username, img_url From Usuario
-    WHERE username = ?`;
+    const username = req.body.username;
+    const pass = req.body.password;
+    let sql = `SELECT idUsuario, username, img_url, email, nombre as name, pass From Usuario
+    WHERE username = ? AND pass = ?`;
     try {
-      const result = await pool.query(sql, [username]);
+      const result = await pool.query(sql, [username, pass]);
       if (result.length > 0) {
-        res.json(result);
+        res.json({ status: true, user: result });
       } else {
-        res.json([]);
+        res.json({ status: false, user: [] });
       }
     } catch (err) {
       res.json([]);
@@ -319,7 +321,30 @@ class ApiController {
     }
   }
   public async newPost(req: Request, res: Response) {
-    const { imagen, texto, idUser } = req.body;
+    const { imagen, texto, idUser, fecha } = req.body;
+    //Imagen = Base 64 a subir al server.
+    //VERSION LOCAL (default img)
+    console.log("IMAGEN: ", imagen);
+    let sql = `INSERT INTO Publicacion(url_imagen, texto,Publicacion_idUsuario, fecha)
+        VALUES(?, ?, ?, ?)`;
+    try {
+      //IMAGEN BASE64 TO S3
+      let img_url = ""
+      if (imagen != undefined && imagen.length > 0) {
+        img_url = "https://source.unsplash.com/random/200x200";
+      }
+      const result = await pool.query(sql, [img_url, texto, idUser, fecha]);
+      res.status(200).json({
+        status: true,
+        result: "Publicado Correctamente",
+        idPost: result.insertId,
+      });
+    } catch (err) {
+      res.status(200).json({ status: false, result: "Ocurrio un error" });
+      console.log("ERROR: " + err);
+    }
+
+    /* WORKING VERSION WITH S3
     //PLACE img to S3 profile pictures bucket
     let nombrei =
       "posts-pictures/" + req.body.nickname + "-pp" + "-" + uuidv4() + ".jpg";
@@ -350,6 +375,7 @@ class ApiController {
         }
       }
     });
+    */
   }
   public async newTag(req: Request, res: Response) {
     const { tag } = req.body;

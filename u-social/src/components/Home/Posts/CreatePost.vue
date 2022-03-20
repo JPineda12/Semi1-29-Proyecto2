@@ -106,16 +106,34 @@ export default {
     },
     async publicar(event) {
       event.preventDefault();
-      if (this.newPost.image === "") {
-        Swal.fire("Error - El post debe incluir una imagen", "", "error");
-      } else {
-        var today = new Date();
-        this.newPost.date =
-          today.getFullYear() +
-          "-" +
-          (today.getMonth() + 1) +
-          "-" +
-          today.getDate();
+      var today = new Date();
+      this.newPost.date =
+        today.getFullYear() +
+        "-" +
+        (today.getMonth() + 1) +
+        "-" +
+        today.getDate();
+      let compatible_base64 = this.newPost.image.split(",")[1];
+
+      this.axios.post("/new-post", {
+        imagen: compatible_base64,
+        texto: this.newPost.text,
+        idUser: this.User.idUsuario,
+        fecha: this.newPost.date
+      });
+      //EMIT A COMPONENTE PADRE PARA PUSHEAR EL POST EN TIEMPO REAL.
+      this.$emit("posted", this.newPost);
+      this.newPost.tags = [];
+      this.newPost = {
+        idPost: 1,
+        text: "",
+        image: "",
+        owner: this.User.username,
+        tags: [],
+        date: "",
+      };
+      /* FUNCION LAMBDA PARA OBTENER ETIQUETAS A PARTIR DE IMAGEN
+        ** E INGRESAR TAGS Y PUBLICACION A LA BASE DE DATOS
         let compatible_base64 = this.newPost.image.split(",")[1];
         let lambdaBody = {
           imagen: compatible_base64,
@@ -150,9 +168,8 @@ export default {
                   });
               }
             }
-
             //INSERTAR NEW POST ON PUBLICACION TABLE
-
+          
             this.axios
               .post("/new-post", {
                 imagen: compatible_base64,
@@ -182,8 +199,7 @@ export default {
                   date: "",
                 };
               });
-          });
-      }
+          });*/
     },
   },
 };

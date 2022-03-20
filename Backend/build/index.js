@@ -68,8 +68,6 @@ var s3Routes_1 = __importDefault(require("./routes/s3Routes"));
 var socketio = __importStar(require("socket.io"));
 var http = require("http");
 var chatController_1 = require("./controllers/chatController");
-var https = require("https");
-var fs = require("fs");
 var IndexServer = /** @class */ (function () {
     function IndexServer() {
         this.app = express_1.default();
@@ -77,19 +75,17 @@ var IndexServer = /** @class */ (function () {
         this.config();
         this.routes();
         this.server = new http.Server(this.app);
-        this.io = new socketio.Server(this.server);
-        this.options = {
-            key: fs.readFileSync('certs/example.com+5-key.pem'),
-            cert: fs.readFileSync('certs/example.com+5.pem')
-        };
+        this.io = new socketio.Server(this.server, {
+            cors: {
+                origin: "*",
+                methods: ["GET", "POST", "PUT"],
+                //        transports: ["websocket", "polling"]
+            },
+        });
     }
     IndexServer.prototype.listen = function () {
         var _this = this;
         this.start();
-        var secureServ = https.createServer(this.options, this.app).listen(443, function () {
-            console.log("Running HTTPS server on port 443");
-        });
-        this.io = new socketio.Server(secureServ);
         this.io.on("connection", function (socket) {
             console.log("A user with ID: " + socket.id + " connected");
             socket.on("disconnect", function () {

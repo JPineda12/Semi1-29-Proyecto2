@@ -1,8 +1,8 @@
 export default {
   database: {
-    host: "",
-    user: "",
-    password: "",
-    database: "",
+    host: "localhost",
+    user: "root",
+    password: "admin",
+    database: "ayd1_practica2",
   },
 };

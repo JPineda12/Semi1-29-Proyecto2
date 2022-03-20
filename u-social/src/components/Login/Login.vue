@@ -149,7 +149,6 @@
 </template>
 
 <script>
-import Swal from "sweetalert2";
 //import bcrypt from "bcryptjs";
 export default {
   name: "Login",
@@ -237,80 +236,35 @@ export default {
         this.LoginValues.username !== "" &&
         this.LoginValues.password !== ""
       ) {
+        console.log("letsseee");
         this.LoginCreds();
-      } else {
-        this.LoginFace();
       }
-    },
-    async LoginFace() {
-      let arraybase64 = this.imagen.split("/");
-      let compatible_base64 = "";
-      let i = 0;
-      for await (let str of arraybase64) {
-        if (i >= 2) {
-          compatible_base64 += "/" + str;
-        }
-        i++;
-      }
-      let user = {
-        username: this.LoginValues.username_cam,
-        imagen: compatible_base64,
-      };
-      this.axios.post("/login-face", user).then((response) => {
-        this.LoginValues.password = "";
-        console.log("AVER: ", response);
-        if (response.data.Comparacion.length > 0) {
-          if (response.data.Comparacion[0].Similarity >= 80) {
-            let usuario = {
-              idUsuario: response.data.usuario[0].idUsuario,
-              username: response.data.usuario[0].username,
-              img_url: response.data.usuario[0].img_url,
-              name: response.data.usuario[0].nombre,
-              botmode: response.data.usuario[0].botmode,
-              email: response.data.usuario[0].email,
-            };
-            localStorage.setItem("user-info", JSON.stringify(usuario));
-            this.$router.push({ name: "Home" });
-            this.LoginValues.password = "";
-            this.LoginValues.username = "";
-            this.LoginValues.username_cam = "";
-          }
-        } else {
-          Swal.fire({
-            title: "No se reconocio el rostro con el usuario: " + user.username,
-            icon: "error",
-            confirmButtonColor: "#3085d6",
-          });
-        }
-      });
     },
     LoginCreds() {
-      this.axios.post("/login", this.LoginValues).then((response) => {
-        if (response.data.code === "UserNotConfirmedException") {
-          this.txtError = "Usuario sin CONFIRMAR";
+      this.axios.post(`/user/`, this.LoginValues).then((res) => {
+        console.log("RES: ", res);
+        if (res.data.status) {
+          let usuario = {
+            idUsuario: res.data.user[0].idUsuario,
+            username: res.data.user[0].username,
+            img_url: res.data.user[0].img_url,
+            name: res.data.user[0].name,
+            email: res.data.user[0].email,
+          };
+          localStorage.setItem("user-info", JSON.stringify(usuario));
+
+          this.$router.push({ name: "Home" });
           this.LoginValues.password = "";
-        } else if (
-          response.data.code === "NotAuthorizedException" ||
-          response.data.code === "InvalidParameterException"
-        ) {
+          this.LoginValues.username = "";
+          this.LoginValues.username_cam = "";
+        } else if (!res.data.status) {
           this.txtError = "Credenciales Incorrectas";
           this.LoginValues.password = "";
         } else {
-          this.axios.get(`/user/${this.LoginValues.username}`).then((res) => {
-            let usuario = {
-              idUsuario: res.data[0].idUsuario,
-              username: res.data[0].username,
-              img_url: res.data[0].img_url,
-              name: response.data.idToken.payload.name,
-              botmode: response.data.idToken.payload["custom:botmode"],
-              email: response.data.idToken.payload.email,
-            };
-            localStorage.setItem("user-info", JSON.stringify(usuario));
-            this.$router.push({ name: "Home" });
-            this.LoginValues.password = "";
-            this.LoginValues.username = "";
-            this.LoginValues.username_cam = "";
-          });
+          this.txtError =
+            "No se pudo comunicar con el servidor - Intente mas tarde";
+          this.LoginValues.username = "";
+          this.LoginValues.password = "";
         }
       });
     },

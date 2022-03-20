@@ -8,8 +8,8 @@ import * as socketio from "socket.io";
 import http = require("http");
 import { chatController } from "./controllers/chatController";
 import { createServer, Server } from "http";
-import https = require('https');
-import fs = require('fs');
+import https = require("https");
+import fs = require("fs");
 
 class IndexServer {
   public app: Application;
@@ -24,19 +24,18 @@ class IndexServer {
     this.config();
     this.routes();
     this.server = new http.Server(this.app);
-    this.io = new socketio.Server(this.server);
-    this.options = {
-      key: fs.readFileSync('certs/example.com+5-key.pem'),
-      cert: fs.readFileSync('certs/example.com+5.pem')
-    }
+    this.io = new socketio.Server(this.server, {
+      cors: {
+        origin: "*",
+        methods: ["GET", "POST", "PUT"],
+        //        transports: ["websocket", "polling"]
+      },
+    });
   }
 
   listen() {
     this.start();
-    const secureServ = https.createServer(this.options, this.app).listen(443, () => {
-      console.log("Running HTTPS server on port 443");
-    });
-    this.io = new socketio.Server(secureServ);
+
     this.io.on("connection", (socket: socketio.Socket) => {
       console.log("A user with ID: " + socket.id + " connected");
 
@@ -78,7 +77,6 @@ class IndexServer {
     this.server.listen(this.port, () => {
       console.log("Running server on port %s", this.port);
     });
- 
   }
 }
 

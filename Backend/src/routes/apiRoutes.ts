@@ -10,23 +10,21 @@ class ApiRoutes {
   }
 
   config(): void {
-    this.router.post("/login", userController.loginCognito);
-    this.router.post("/login-face", userController.loginFace);
-    this.router.post("/signup", userController.signup);
-    this.router.put("/edit-profile", userController.editProfileCognito);
+    this.router.post("/user", apiController.getUserByName); //Login
+    this.router.post("/signup", userController.signup); //Registro
+    this.router.put("/edit-profile", userController.editProfile); 
 
     this.router.get("/tags", apiController.getAllTags);
-    this.router.get("/user/:username", apiController.getUserByName);
-    this.router.get("/testusers", apiController.getTestUsers);
-    this.router.get("/posts", apiController.getAllPosts);
-    this.router.post("/new-post", apiController.newPost);
-    this.router.post("/new-tag", apiController.newTag);
+    this.router.get("/testusers", apiController.getTestUsers); //Get all Users
+    this.router.get("/posts", apiController.getAllPosts); //Get all posts
+    this.router.post("/new-post", apiController.newPost); //Post a new publicacion
+    this.router.post("/new-tag", apiController.newTag); 
     this.router.post("/post-tags", apiController.publicacionesNTags);
-
-    this.router.get("/friends/:iduser", apiController.getAllFriends);
-    this.router.get("/requests/:iduser", apiController.getAllFriendRequests);
-    this.router.get("/users/:iduser", apiController.getAllExceptFriends);
     this.router.post("/translate/", apiController.translatePost);
+    
+    this.router.get("/friends/:iduser", apiController.getAllFriends); //Get all friends of X user
+    this.router.get("/requests/:iduser", apiController.getAllFriendRequests); // Get friend requests of X user
+    this.router.get("/users/:iduser", apiController.getAllExceptFriends);
     this.router.put("/reject", apiController.rejectRequest);
     this.router.put("/confirm", apiController.confirmRequest);
     this.router.put("/send-again", apiController.sendRequest_Again);

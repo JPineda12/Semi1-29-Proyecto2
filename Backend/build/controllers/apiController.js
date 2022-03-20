@@ -44,30 +44,28 @@ var database_1 = __importDefault(require("../database"));
 var aws_sdk_1 = __importDefault(require("aws-sdk"));
 var creds_1 = __importDefault(require("../creds"));
 var s3 = new aws_sdk_1.default.S3(creds_1.default.s3);
-var uuid_1 = require("uuid");
 var ApiController = /** @class */ (function () {
     function ApiController() {
     }
     ApiController.prototype.translatePost = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var translate, postText, params;
             return __generator(this, function (_a) {
-                translate = new aws_sdk_1.default.Translate(creds_1.default.translate);
-                postText = req.body.text;
-                params = {
-                    SourceLanguageCode: "auto",
-                    TargetLanguageCode: "es",
-                    Text: postText || "Hello there",
+                /*const translate = new AWS.Translate(aws_keys.translate);
+                const postText = req.body.text;
+                let params = {
+                  SourceLanguageCode: "auto",
+                  TargetLanguageCode: "es",
+                  Text: postText || "Hello there",
                 };
                 translate.translateText(params, function (err, data) {
-                    if (err) {
-                        console.log(err, err.stack);
-                        res.send({ error: err });
-                    }
-                    else {
-                        res.send({ message: data });
-                    }
-                });
+                  if (err) {
+                    console.log(err, err.stack);
+                    res.send({ error: err })
+                  } else {
+                    res.send({ message: data })
+                  }
+                });*/
+                res.send({ message: "Translate" });
                 return [2 /*return*/];
             });
         });
@@ -413,23 +411,24 @@ var ApiController = /** @class */ (function () {
     };
     ApiController.prototype.getUserByName = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var username, sql, result, err_14;
+            var username, pass, sql, result, err_14;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        username = req.params.username;
-                        sql = "SELECT idUsuario, username, img_url From Usuario\n    WHERE username = ?";
+                        username = req.body.username;
+                        pass = req.body.password;
+                        sql = "SELECT idUsuario, username, img_url, email, nombre as name, pass From Usuario\n    WHERE username = ? AND pass = ?";
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, database_1.default.query(sql, [username])];
+                        return [4 /*yield*/, database_1.default.query(sql, [username, pass])];
                     case 2:
                         result = _a.sent();
                         if (result.length > 0) {
-                            res.json(result);
+                            res.json({ status: true, user: result });
                         }
                         else {
-                            res.json([]);
+                            res.json({ status: false, user: [] });
                         }
                         return [3 /*break*/, 4];
                     case 3:
@@ -523,52 +522,38 @@ var ApiController = /** @class */ (function () {
     };
     ApiController.prototype.newPost = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, imagen, texto, idUser, nombrei, buff, params;
+            var _a, imagen, texto, idUser, fecha, sql, img_url, result, err_17;
             return __generator(this, function (_b) {
-                _a = req.body, imagen = _a.imagen, texto = _a.texto, idUser = _a.idUser;
-                nombrei = "posts-pictures/" + req.body.nickname + "-pp" + "-" + uuid_1.v4() + ".jpg";
-                buff = Buffer.from(imagen, "base64");
-                params = {
-                    Bucket: "p2-bucket-semi1",
-                    Key: nombrei,
-                    Body: buff,
-                    ContentType: "image",
-                    ACL: "public-read",
-                };
-                s3.upload(params, function sync(err, data) {
-                    return __awaiter(this, void 0, void 0, function () {
-                        var sql, result, err_17;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    if (!err) return [3 /*break*/, 1];
-                                    res.status(500).send(err);
-                                    return [3 /*break*/, 5];
-                                case 1:
-                                    sql = "INSERT INTO Publicacion(url_imagen, texto, Publicacion_idUsuario)\n        VALUES(?, ?, ?)";
-                                    _a.label = 2;
-                                case 2:
-                                    _a.trys.push([2, 4, , 5]);
-                                    return [4 /*yield*/, database_1.default.query(sql, [data.Location, texto, idUser])];
-                                case 3:
-                                    result = _a.sent();
-                                    res.status(200).json({
-                                        status: true,
-                                        result: "Publicado Correctamente",
-                                        idPost: result.insertId,
-                                    });
-                                    return [3 /*break*/, 5];
-                                case 4:
-                                    err_17 = _a.sent();
-                                    res.status(200).json({ status: false, result: "Ocurrio un error" });
-                                    console.log("ERROR: " + err_17);
-                                    return [3 /*break*/, 5];
-                                case 5: return [2 /*return*/];
-                            }
+                switch (_b.label) {
+                    case 0:
+                        _a = req.body, imagen = _a.imagen, texto = _a.texto, idUser = _a.idUser, fecha = _a.fecha;
+                        //Imagen = Base 64 a subir al server.
+                        //VERSION LOCAL (default img)
+                        console.log("IMAGEN: ", imagen);
+                        sql = "INSERT INTO Publicacion(url_imagen, texto,Publicacion_idUsuario, fecha)\n        VALUES(?, ?, ?, ?)";
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, , 4]);
+                        img_url = "";
+                        if (imagen != undefined && imagen.length > 0) {
+                            img_url = "https://source.unsplash.com/random/200x200";
+                        }
+                        return [4 /*yield*/, database_1.default.query(sql, [img_url, texto, idUser, fecha])];
+                    case 2:
+                        result = _b.sent();
+                        res.status(200).json({
+                            status: true,
+                            result: "Publicado Correctamente",
+                            idPost: result.insertId,
                         });
-                    });
-                });
-                return [2 /*return*/];
+                        return [3 /*break*/, 4];
+                    case 3:
+                        err_17 = _b.sent();
+                        res.status(200).json({ status: false, result: "Ocurrio un error" });
+                        console.log("ERROR: " + err_17);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
             });
         });
     };

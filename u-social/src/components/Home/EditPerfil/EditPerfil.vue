@@ -115,9 +115,9 @@ export default {
         confirmButtonText: "Si, editar!",
       }).then((result) => {
         if (result.isConfirmed) {
-          let bot = 0;
-          if (this.botmode) {
-            bot = 1;
+          let url_imagen = ""
+          if(this.base64.length === 0){
+            url_imagen = this.User.img_url
           }
           let editBody = {
             username: this.User.username,
@@ -125,10 +125,28 @@ export default {
             newpassword: this.newpass,
             name: this.nombre,
             email: this.email,
-            botmode: bot,
             imgbase64: this.base64,
+            img_url: url_imagen
           };
+
           this.axios.put("/edit-profile", editBody).then((response) => {
+            console.log("Edit response: ", response);
+            if (response.data.affectedRows === 1) {
+              Swal.fire("Updated!", "Perfil actualizado", "success");
+              let usuario = {
+                idUsuario: this.User.idUsuario,
+                username: this.User.username,
+                img_url: this.User.img_url,
+                name: editBody.name,
+                botmode: editBody.botmode,
+                email: editBody.email,
+              };
+              localStorage.clear();
+              localStorage.setItem("user-info", JSON.stringify(usuario));
+            }else{
+              Swal.fire("Error!", "Contraseña Incorrecta", "error");
+            }
+            /* EDIT PROFILE FOR COGNITO
             if (response.data.code === "UserNotConfirmedException") {
               Swal.fire("Error!", "Usuario sin confirmar", "error");
             } else if (
@@ -150,7 +168,7 @@ export default {
                 localStorage.clear();
                 localStorage.setItem("user-info", JSON.stringify(usuario));
               }
-            }
+            }*/
           });
         }
       });

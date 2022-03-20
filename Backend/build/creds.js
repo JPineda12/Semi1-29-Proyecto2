@@ -15,8 +15,8 @@ var aws_keys = {
     /*
    //TEST PURPOSES COGNITO
     cognito:{
-        UserPoolId: 'us-eat-2_8Fiadroi0',
-        ClientId: '7hcj7ir'
+        UserPoolId: 'us-east-2_8Fiadroi0',
+        ClientId: ''
     },
     */
     rekognition: {

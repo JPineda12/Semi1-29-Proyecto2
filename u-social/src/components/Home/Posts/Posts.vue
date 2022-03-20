@@ -69,9 +69,11 @@ export default {
       }
     },
     newPost(post) {
+      console.log("NEW POST")
       console.log(post);
-      this.getTags();
-      this.getPosts();
+      this.Posts.unshift(post);
+      //this.getTags();
+      //this.getPosts();
     },
     getPosts() {
       this.Posts = [];
@@ -79,12 +81,13 @@ export default {
         .get(`/posts`)
         .then((response) => {
           for (let i = 0; i < response.data.length; i++) {
+            console.log("POST: ",response.data[i])
             let sp = {
               idPost: response.data[i].publicacion.idPublicacion,
               owner: response.data[i].publicacion.owner,
-              image: response.data[i].publicacion.url_imagen,
+              image: response.data[i].publicacion.url_imagen+"?sig="+i,
               text: response.data[i].publicacion.texto,
-              date: "2017-12-12",
+              fecha: response.data[i].publicacion.fecha,
               tags: response.data[i].etiquetas,
             };
             this.Posts.push(sp);

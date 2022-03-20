@@ -268,9 +268,8 @@ export default {
           nickname: this.registerValues.user,
           email: this.registerValues.correo,
           name: this.registerValues.user,
-          password: this.registerValues.contrasena,
-          imagen: this.compatible_base64,
-          bot: 0,
+          pass: this.registerValues.contrasena,
+          imagen64: this.compatible_base64,
         };
         console.log(user);
 

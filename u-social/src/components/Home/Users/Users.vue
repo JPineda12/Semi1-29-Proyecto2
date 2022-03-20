@@ -117,7 +117,7 @@ export default {
               idUsuario: response.data[i].idUsuario,
               nombre: response.data[i].username,
               //response.data[i].img_url,
-              imagen_url:response.data[i].img_url,
+              imagen_url: response.data[i].img_url,
             };
             this.Requests.push(us);
           }
@@ -143,8 +143,7 @@ export default {
                 buttonText: "Add Friend",
                 isSent: false,
                 //response.data[i].img_url,
-                imagen_url:
-                  response.data[i].img_url,
+                imagen_url: response.data[i].img_url,
               };
               if (response.data[i].estado.toUpperCase() === "PENDIENTE") {
                 us.buttonText = "Request Sent";
@@ -163,21 +162,6 @@ export default {
     addFriend(newFriend) {
       console.log("idAmigo1: ", this.User.idUsuario);
       console.log("idAmigo2: ", newFriend.idUsuario);
-      const toast = useToast();
-      toast.success("¡Solicitud de amistad enviada!", {
-        position: "bottom-left",
-        timeout: 2000,
-        closeOnClick: true,
-        pauseOnFocusLoss: true,
-        pauseOnHover: true,
-        draggable: true,
-        draggablePercent: 0.6,
-        showCloseButtonOnHover: false,
-        hideProgressBar: true,
-        closeButton: "button",
-        icon: true,
-        rtl: false,
-      });
       newFriend.isSent = true;
       newFriend.buttonText = "Request Sent";
       let requestBody = {
@@ -187,7 +171,22 @@ export default {
       this.axios
         .post("send-request", requestBody)
         .then((response) => {
-          console.log(response);
+          console.log("Request Response: ",response);
+          const toast = useToast();
+          toast.success("¡Solicitud de amistad enviada!", {
+            position: "bottom-left",
+            timeout: 2000,
+            closeOnClick: true,
+            pauseOnFocusLoss: true,
+            pauseOnHover: true,
+            draggable: true,
+            draggablePercent: 0.6,
+            showCloseButtonOnHover: false,
+            hideProgressBar: true,
+            closeButton: "button",
+            icon: true,
+            rtl: false,
+          });
         })
         .catch((error) => {
           console.log("error: ", error);
